@@ -1,8 +1,5 @@
 <?php
 
-use App\Libs\Statics\Url;
-use App\Libs\Statics\View;
-
 function view($path, $args = []) {
     return View::show($path, $args);
 }
@@ -11,12 +8,26 @@ function path($path) {
     return Url::path($path);
 }
 
-function twig($path, $args = []) {
-    return View::twig($path, $args);
+function twig($path = null, $args = []) {
+    if ($path) {
+        return View::twig($path, $args);
+    }
+    return View::getTwig();
 }
 
 function route($name, $args = []) {
     return Url::route($name, $args);
+}
+
+function flash($name, $content = null) {
+    return Session::flash($name, $content);
+}
+
+function validate(array $data = null, array $param_rules = [], array $error_msgs = []) {
+    if ($data) {
+        return Validation::chech($data, $param_rules, $error_msgs);
+    }
+    return Validation::getInstance();
 }
 
 function redirect($location, $with = [], $after = 0) {
@@ -57,21 +68,20 @@ function array_fetch(array $array, $path_to_key, $default = null) {
         }
     }
 
-    return $array ?  $array : $default;
+    return $array ? $array : $default;
 }
 
-function array_merge_mixed(){
+function array_merge_mixed() {
     $array = [];
-    foreach (func_get_args() as $arg){
-        if (is_array($arg)){
-            $array = array_merge_recursive($array,$arg);
-        }else if($arg){
-            $array []= $arg;
+    foreach (func_get_args() as $arg) {
+        if (is_array($arg)) {
+            $array = array_merge_recursive($array, $arg);
+        } else if ($arg) {
+            $array [] = $arg;
         }
     }
     return $array;
 }
-
 
 function uniqueFile($path, $filename) {
     $fileparts = explode('.', $filename);

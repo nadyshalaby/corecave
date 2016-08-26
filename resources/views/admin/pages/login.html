@@ -1,6 +1,8 @@
 {% extends 'admin/default.html '%}
 
 {% block body %}
+
+{{ v.getError('nady','nady') }}
 <div class="row body">
     <div class="col-lg-6 col-lg-offset-3">
         <div class= "head text-capitalize text-center">
@@ -9,41 +11,40 @@
     </div>
     <div class="col-lg-6 col-lg-offset-3">
         <div class="main">
-            <h1>we care from your hearts! <h1>
-                    </div>
-                    </div>
-                    <div class="center">
-                        <div class="col-md-6 col-md-offset-3 contact">
-                            <form role="form" action="{{ url_route('sign-in') }}" method="post">
+            <h1>we care from your hearts! </h1>
+        </div>
+    </div>
+    <div class="center">
+        <div class="col-md-6 col-md-offset-3 contact">
+            <form role="form" action="{{ url_route('auth.signin') }}" method="post">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group input-group col-xs-12 floating-label-form-group">
+                            <span class="input-group-addon"> <i class="fa fa-envelope-o fa-lg"></i> </span>
+                            <label for="email">Email</label>
+                            <input class="form-control" type="email" name="email" id="email" value="{{ data.email }}" placeholder="Email">
+                        </div>
+                        <div class="form-group input-group col-xs-12 floating-label-form-group">
+                            <span class="input-group-addon"> <i class="fa fa-lock fa-lg"></i> </span>
 
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group input-group col-xs-12 floating-label-form-group">
-                                            <span class="input-group-addon"> <i class="fa fa-envelope-o fa-lg"></i> </span>
-                                            <label for="email">Email</label>
-                                            <input class="form-control" type="email" name="email" id="email" value="{{ data.email }}" placeholder="Email">
-                                        </div>
-                                        <div class="form-group input-group col-xs-12 floating-label-form-group">
-                                            <span class="input-group-addon"> <i class="fa fa-lock fa-lg"></i> </span>
+                            <label for="pass">Password</label>
 
-                                            <label for="pass">Password</label>
-
-                                            <input class="form-control" type="password" name="pass" id="pass" placeholder="Password">
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name='remember'> Remember me...
-                                            </label>
-                                        </div>
-                                        <br>
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-default btn-lg">Login</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                {{ token_input()|raw }}
-                            </form>
+                            <input class="form-control" type="password" name="pass" id="pass" placeholder="Password">
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name='remember'> Remember me...
+                            </label>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-default btn-lg">Login</button>
                         </div>
                     </div>
-                    </div>
+                </div>
+                {{ token_input()|raw }}
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -21,8 +21,11 @@ class __TwigTemplate_7aede4f6802c930cac47eec8fbf73d7df2d3e3188e68d758d1c1e48852d
     {
         // line 1
         echo "<!DOCTYPE html>
-
-<html lang=\"en\">
+";
+        // line 2
+        $context["data"] = call_user_func_array($this->env->getFunction('session_flash')->getCallable(), array("data"));
+        // line 3
+        echo "<html lang=\"en\">
     <head>
         <meta charset=\"UTF-8\"/>
         <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
@@ -161,11 +164,11 @@ class __TwigTemplate_7aede4f6802c930cac47eec8fbf73d7df2d3e3188e68d758d1c1e48852d
 
     public function getDebugInfo()
     {
-        return array (  148 => 50,  143 => 43,  138 => 19,  133 => 14,  118 => 51,  116 => 50,  111 => 48,  107 => 47,  103 => 46,  99 => 45,  96 => 44,  94 => 43,  85 => 37,  70 => 25,  63 => 20,  61 => 19,  55 => 15,  53 => 14,  48 => 12,  44 => 11,  40 => 10,  36 => 9,  32 => 8,  23 => 1,);
+        return array (  151 => 50,  146 => 43,  141 => 19,  136 => 14,  121 => 51,  119 => 50,  114 => 48,  110 => 47,  106 => 46,  102 => 45,  99 => 44,  97 => 43,  88 => 37,  73 => 25,  66 => 20,  64 => 19,  58 => 15,  56 => 14,  51 => 12,  47 => 11,  43 => 10,  39 => 9,  35 => 8,  28 => 3,  26 => 2,  23 => 1,);
     }
 }
 /* <!DOCTYPE html>*/
-/* */
+/* {% set data = session_flash('data') %}*/
 /* <html lang="en">*/
 /*     <head>*/
 /*         <meta charset="UTF-8"/>*/

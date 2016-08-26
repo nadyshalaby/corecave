@@ -5,10 +5,10 @@ use App\Forgers\R;
 use App\Forgers\Request;
 use App\Forgers\Response;
 use App\Forgers\Validation;
+use App\Forgers\View;
 use App\Libs\Statics\Session;
 use App\Libs\Statics\Token;
 use App\Libs\Statics\Url;
-use App\Libs\Statics\View;
 
 /**
  * Make sure that any of classes using aliases didn't previously imported;

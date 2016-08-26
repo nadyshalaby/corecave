@@ -38,13 +38,13 @@ abstract class Session {
         return $as_arr ? $_SESSION : arr2obg($_SESSION);
     }
     
-    public static function flash($type, $content = null) {
-        if (self::has($type) && empty($content)) {
-            $content = self::get($type);
-            self::delete($type);
+    public static function flash($name, $content = null) {
+        if (self::has($name) && empty($content)) {
+            $content = self::get($name);
+            self::delete($name);
             return $content;
         }
-        return self::put($type, $content);
+        return self::put($name, $content);
     }
 
 }

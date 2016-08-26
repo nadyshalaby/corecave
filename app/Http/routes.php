@@ -30,7 +30,11 @@ R::get('/orders', [
     'name' => 'orders',
 ]);
 
-R::get('/login', [
-    'controller' => 'Admin\AuthController@index',
-    'name' => 'auth.login',
+R::map('/signin',['controller'=>'Admin\\AuthController','name' => 'auth'], [
+    'index' => [
+        'name' => 'signin',
+    ],
+    'signin' => [
+        'method' => 'post'
+    ]
 ]);

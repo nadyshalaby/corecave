@@ -15,6 +15,10 @@ use function escape;
 
 class Validation {
 
+    public function __construct() {
+        twig()->addGlobal('v', $this);
+    }
+    
     private $_errors = [];
     private $_msgs = [];
     private $zip = [
@@ -408,7 +412,7 @@ class Validation {
                 }
             }
         }
-
+        
         return $this;
     }
 
@@ -419,8 +423,24 @@ class Validation {
         return false;
     }
 
-    private function addError($field, $rule, $error) {
+    public function addError($field, $rule, $error) {
         $this->_errors[$field][$rule] = (isset($this->_msgs[$field][$rule])) ? $this->_msgs[$field][$rule] : $error;
+
+        return $this;
+    }
+
+    public function hasError($field, $rule = null) {
+        if ($rule) {
+            return isset($this->_errors[$field][$rule]);
+        }
+        return isset($this->_errors[$field]);
+    }
+
+    public function forgetError($field, $rule = null) {
+        if ($rule) {
+            unset($this->_errors[$field][$rule]);
+        }
+        unset($this->_errors[$field]);
     }
 
     public function withMsgs(array $error_msgs = []) {
@@ -434,14 +454,14 @@ class Validation {
         return $this;
     }
 
-    public function getErrorsFor($param = '',$rule = '') {
-        if (!empty($param) && key_exists($param, $this->_errors)) {
-            if(isset($this->_errors[$param][$rule])){         
-                 return $this->_errors[$param][$rule];
+    public function getError($param, $rule = '') {
+        if (key_exists($param, $this->_errors)) {
+            if (isset($this->_errors[$param][$rule])) {
+                return $this->_errors[$param][$rule];
             }
             return $this->_errors[$param];
         }
-        return array_values($this->_errors);
+        return null;
     }
 
     public function getAllErrorMsgs() {
@@ -454,4 +474,11 @@ class Validation {
         return $msgs;
     }
 
+    public function getAllErrors() {
+        return $this->_errors;
+    }
+    
+    public function getInstance() {
+        return $this;
+    }
 }

@@ -28,7 +28,12 @@ class __TwigTemplate_083cd1776cfcfc4cf496040e03798474e32403b0187a9fe9ab9c7cc0b64
     public function block_body($context, array $blocks = array())
     {
         // line 4
-        echo "<div class=\"row body\">
+        echo "
+";
+        // line 5
+        echo twig_escape_filter($this->env, $this->getAttribute((isset($context["v"]) ? $context["v"] : null), "getError", array(0 => "nady", 1 => "nady"), "method"), "html", null, true);
+        echo "
+<div class=\"row body\">
     <div class=\"col-lg-6 col-lg-offset-3\">
         <div class= \"head text-capitalize text-center\">
             <p>welcom home! </p>
@@ -36,52 +41,51 @@ class __TwigTemplate_083cd1776cfcfc4cf496040e03798474e32403b0187a9fe9ab9c7cc0b64
     </div>
     <div class=\"col-lg-6 col-lg-offset-3\">
         <div class=\"main\">
-            <h1>we care from your hearts! <h1>
-                    </div>
-                    </div>
-                    <div class=\"center\">
-                        <div class=\"col-md-6 col-md-offset-3 contact\">
-                            <form role=\"form\" action=\"";
-        // line 17
-        echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('url_route')->getCallable(), array("sign-in")), "html", null, true);
+            <h1>we care from your hearts! </h1>
+        </div>
+    </div>
+    <div class=\"center\">
+        <div class=\"col-md-6 col-md-offset-3 contact\">
+            <form role=\"form\" action=\"";
+        // line 19
+        echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('url_route')->getCallable(), array("auth.signin")), "html", null, true);
         echo "\" method=\"post\">
-
-                                <div class=\"row\">
-                                    <div class=\"col-md-12\">
-                                        <div class=\"form-group input-group col-xs-12 floating-label-form-group\">
-                                            <span class=\"input-group-addon\"> <i class=\"fa fa-envelope-o fa-lg\"></i> </span>
-                                            <label for=\"email\">Email</label>
-                                            <input class=\"form-control\" type=\"email\" name=\"email\" id=\"email\" value=\"";
-        // line 24
+                <div class=\"row\">
+                    <div class=\"col-md-12\">
+                        <div class=\"form-group input-group col-xs-12 floating-label-form-group\">
+                            <span class=\"input-group-addon\"> <i class=\"fa fa-envelope-o fa-lg\"></i> </span>
+                            <label for=\"email\">Email</label>
+                            <input class=\"form-control\" type=\"email\" name=\"email\" id=\"email\" value=\"";
+        // line 25
         echo twig_escape_filter($this->env, $this->getAttribute((isset($context["data"]) ? $context["data"] : null), "email", array()), "html", null, true);
         echo "\" placeholder=\"Email\">
-                                        </div>
-                                        <div class=\"form-group input-group col-xs-12 floating-label-form-group\">
-                                            <span class=\"input-group-addon\"> <i class=\"fa fa-lock fa-lg\"></i> </span>
+                        </div>
+                        <div class=\"form-group input-group col-xs-12 floating-label-form-group\">
+                            <span class=\"input-group-addon\"> <i class=\"fa fa-lock fa-lg\"></i> </span>
 
-                                            <label for=\"pass\">Password</label>
+                            <label for=\"pass\">Password</label>
 
-                                            <input class=\"form-control\" type=\"password\" name=\"pass\" id=\"pass\" placeholder=\"Password\">
-                                        </div>
-                                        <div class=\"checkbox\">
-                                            <label>
-                                                <input type=\"checkbox\" name='remember'> Remember me...
-                                            </label>
-                                        </div>
-                                        <br>
-                                        <div class=\"form-group\">
-                                            <button type=\"submit\" class=\"btn btn-default btn-lg\">Login</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                ";
-        // line 44
-        echo call_user_func_array($this->env->getFunction('token_input')->getCallable(), array());
-        echo "
-                            </form>
+                            <input class=\"form-control\" type=\"password\" name=\"pass\" id=\"pass\" placeholder=\"Password\">
+                        </div>
+                        <div class=\"checkbox\">
+                            <label>
+                                <input type=\"checkbox\" name='remember'> Remember me...
+                            </label>
+                        </div>
+                        <br>
+                        <div class=\"form-group\">
+                            <button type=\"submit\" class=\"btn btn-default btn-lg\">Login</button>
                         </div>
                     </div>
-                    </div>
+                </div>
+                ";
+        // line 45
+        echo call_user_func_array($this->env->getFunction('token_input')->getCallable(), array());
+        echo "
+            </form>
+        </div>
+    </div>
+</div>
 ";
     }
 
@@ -97,12 +101,14 @@ class __TwigTemplate_083cd1776cfcfc4cf496040e03798474e32403b0187a9fe9ab9c7cc0b64
 
     public function getDebugInfo()
     {
-        return array (  79 => 44,  56 => 24,  46 => 17,  31 => 4,  28 => 3,  11 => 1,);
+        return array (  83 => 45,  60 => 25,  51 => 19,  34 => 5,  31 => 4,  28 => 3,  11 => 1,);
     }
 }
 /* {% extends 'admin/default.html '%}*/
 /* */
 /* {% block body %}*/
+/* */
+/* {{ v.getError('nady','nady') }}*/
 /* <div class="row body">*/
 /*     <div class="col-lg-6 col-lg-offset-3">*/
 /*         <div class= "head text-capitalize text-center">*/
@@ -111,41 +117,40 @@ class __TwigTemplate_083cd1776cfcfc4cf496040e03798474e32403b0187a9fe9ab9c7cc0b64
 /*     </div>*/
 /*     <div class="col-lg-6 col-lg-offset-3">*/
 /*         <div class="main">*/
-/*             <h1>we care from your hearts! <h1>*/
-/*                     </div>*/
-/*                     </div>*/
-/*                     <div class="center">*/
-/*                         <div class="col-md-6 col-md-offset-3 contact">*/
-/*                             <form role="form" action="{{ url_route('sign-in') }}" method="post">*/
+/*             <h1>we care from your hearts! </h1>*/
+/*         </div>*/
+/*     </div>*/
+/*     <div class="center">*/
+/*         <div class="col-md-6 col-md-offset-3 contact">*/
+/*             <form role="form" action="{{ url_route('auth.signin') }}" method="post">*/
+/*                 <div class="row">*/
+/*                     <div class="col-md-12">*/
+/*                         <div class="form-group input-group col-xs-12 floating-label-form-group">*/
+/*                             <span class="input-group-addon"> <i class="fa fa-envelope-o fa-lg"></i> </span>*/
+/*                             <label for="email">Email</label>*/
+/*                             <input class="form-control" type="email" name="email" id="email" value="{{ data.email }}" placeholder="Email">*/
+/*                         </div>*/
+/*                         <div class="form-group input-group col-xs-12 floating-label-form-group">*/
+/*                             <span class="input-group-addon"> <i class="fa fa-lock fa-lg"></i> </span>*/
 /* */
-/*                                 <div class="row">*/
-/*                                     <div class="col-md-12">*/
-/*                                         <div class="form-group input-group col-xs-12 floating-label-form-group">*/
-/*                                             <span class="input-group-addon"> <i class="fa fa-envelope-o fa-lg"></i> </span>*/
-/*                                             <label for="email">Email</label>*/
-/*                                             <input class="form-control" type="email" name="email" id="email" value="{{ data.email }}" placeholder="Email">*/
-/*                                         </div>*/
-/*                                         <div class="form-group input-group col-xs-12 floating-label-form-group">*/
-/*                                             <span class="input-group-addon"> <i class="fa fa-lock fa-lg"></i> </span>*/
+/*                             <label for="pass">Password</label>*/
 /* */
-/*                                             <label for="pass">Password</label>*/
-/* */
-/*                                             <input class="form-control" type="password" name="pass" id="pass" placeholder="Password">*/
-/*                                         </div>*/
-/*                                         <div class="checkbox">*/
-/*                                             <label>*/
-/*                                                 <input type="checkbox" name='remember'> Remember me...*/
-/*                                             </label>*/
-/*                                         </div>*/
-/*                                         <br>*/
-/*                                         <div class="form-group">*/
-/*                                             <button type="submit" class="btn btn-default btn-lg">Login</button>*/
-/*                                         </div>*/
-/*                                     </div>*/
-/*                                 </div>*/
-/*                                 {{ token_input()|raw }}*/
-/*                             </form>*/
+/*                             <input class="form-control" type="password" name="pass" id="pass" placeholder="Password">*/
+/*                         </div>*/
+/*                         <div class="checkbox">*/
+/*                             <label>*/
+/*                                 <input type="checkbox" name='remember'> Remember me...*/
+/*                             </label>*/
+/*                         </div>*/
+/*                         <br>*/
+/*                         <div class="form-group">*/
+/*                             <button type="submit" class="btn btn-default btn-lg">Login</button>*/
 /*                         </div>*/
 /*                     </div>*/
-/*                     </div>*/
+/*                 </div>*/
+/*                 {{ token_input()|raw }}*/
+/*             </form>*/
+/*         </div>*/
+/*     </div>*/
+/* </div>*/
 /* {% endblock %}*/
