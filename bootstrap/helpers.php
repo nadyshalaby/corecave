@@ -1,5 +1,7 @@
 <?php
 
+use App\Libs\Statics\Container;
+
 function view($path, $args = []) {
     return View::show($path, $args);
 }
@@ -25,7 +27,7 @@ function flash($name, $content = null) {
 
 function validate(array $data = null, array $param_rules = [], array $error_msgs = []) {
     if ($data) {
-        return Validation::chech($data, $param_rules, $error_msgs);
+        return Validation::check($data, $param_rules, $error_msgs);
     }
     return Validation::getInstance();
 }

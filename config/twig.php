@@ -15,6 +15,9 @@ return [
         'debug' => true, //used for development purposes 
     // 'auto_reload' => true, // if it didn't set it will be determined from the value of debug option
     ],
+    'globals' => [
+        'v' => function(){return (new App\Libs\Concretes\Validation)->getInstance();}, // or callable
+    ],
     /**
      *  list the names of the classes that its functions will be statically called in Twig Environments 
      *  list the objects that its functions will be dynamically called in Twig Environments 
@@ -25,6 +28,9 @@ return [
         'Url',
         'Session',
         'Token',
+    ],
+    'member_functions' => [
+        'App\Libs\Concretes\Validation' => ''
     ],
     'callable_functions' => [
         'social' => function ($c) {
@@ -79,7 +85,7 @@ return [
                 'getRelatedProducts' => function ($sub_cat) {
             return ProductModel::with(['sub_cat_id' => $sub_cat]);
         },
-        'getRelatedProducts' => function ($sub_cat) {
+                'getRelatedProducts' => function ($sub_cat) {
             return ProductModel::with(['sub_cat_id' => $sub_cat]);
         },
                 'strip' => function ($string) {

@@ -38,7 +38,7 @@ class Container {
     public static function bind($name, $binding) {
 
         if (in_array($name, array_keys(self::$bindings))) {
-            throw new Exception("No registered method or object found", 1);
+            throw new Exception('"'.$name.'" is already binded!', 1);
         } else {
             if (!is_string($binding) && is_callable($binding)) {
                 $args = (new Resolver)->injectMethod($binding);

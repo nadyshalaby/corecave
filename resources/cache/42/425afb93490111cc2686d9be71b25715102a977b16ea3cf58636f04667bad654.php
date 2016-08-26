@@ -29,14 +29,14 @@ class __TwigTemplate_083cd1776cfcfc4cf496040e03798474e32403b0187a9fe9ab9c7cc0b64
     {
         // line 4
         echo "
-";
-        // line 5
-        echo twig_escape_filter($this->env, $this->getAttribute((isset($context["v"]) ? $context["v"] : null), "getError", array(0 => "nady", 1 => "nady"), "method"), "html", null, true);
-        echo "
+
 <div class=\"row body\">
     <div class=\"col-lg-6 col-lg-offset-3\">
         <div class= \"head text-capitalize text-center\">
-            <p>welcom home! </p>
+            <p>welcome home! ";
+        // line 9
+        echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('hasError')->getCallable(), array("password", "required")), "html", null, true);
+        echo " </p>
         </div>
     </div>
     <div class=\"col-lg-6 col-lg-offset-3\">
@@ -65,7 +65,7 @@ class __TwigTemplate_083cd1776cfcfc4cf496040e03798474e32403b0187a9fe9ab9c7cc0b64
 
                             <label for=\"pass\">Password</label>
 
-                            <input class=\"form-control\" type=\"password\" name=\"pass\" id=\"pass\" placeholder=\"Password\">
+                            <input class=\"form-control\" type=\"password\" name=\"password\" id=\"pass\" placeholder=\"Password\">
                         </div>
                         <div class=\"checkbox\">
                             <label>
@@ -101,18 +101,18 @@ class __TwigTemplate_083cd1776cfcfc4cf496040e03798474e32403b0187a9fe9ab9c7cc0b64
 
     public function getDebugInfo()
     {
-        return array (  83 => 45,  60 => 25,  51 => 19,  34 => 5,  31 => 4,  28 => 3,  11 => 1,);
+        return array (  83 => 45,  60 => 25,  51 => 19,  38 => 9,  31 => 4,  28 => 3,  11 => 1,);
     }
 }
 /* {% extends 'admin/default.html '%}*/
 /* */
 /* {% block body %}*/
 /* */
-/* {{ v.getError('nady','nady') }}*/
+/* */
 /* <div class="row body">*/
 /*     <div class="col-lg-6 col-lg-offset-3">*/
 /*         <div class= "head text-capitalize text-center">*/
-/*             <p>welcom home! </p>*/
+/*             <p>welcome home! {{ hasError('password','required')}} </p>*/
 /*         </div>*/
 /*     </div>*/
 /*     <div class="col-lg-6 col-lg-offset-3">*/
@@ -135,7 +135,7 @@ class __TwigTemplate_083cd1776cfcfc4cf496040e03798474e32403b0187a9fe9ab9c7cc0b64
 /* */
 /*                             <label for="pass">Password</label>*/
 /* */
-/*                             <input class="form-control" type="password" name="pass" id="pass" placeholder="Password">*/
+/*                             <input class="form-control" type="password" name="password" id="pass" placeholder="Password">*/
 /*                         </div>*/
 /*                         <div class="checkbox">*/
 /*                             <label>*/

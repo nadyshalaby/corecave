@@ -308,6 +308,7 @@ class Router {
                             } else if (!is_null($res)) {
                                 dd($res);
                             }
+
                             return;
                         }
                     }
@@ -318,7 +319,7 @@ class Router {
             }
         } catch (Exception $exc) {
             die($exc->getMessage() . ' please go <a href="' . Request::getPrevUrl() . '">back.</a>');
-        }
+        } 
     }
 
 }

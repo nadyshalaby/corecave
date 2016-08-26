@@ -45,10 +45,15 @@ class View {
 
         // load functions of defined classes into Twig Environment
         $this->twigStaticFunctions();
+        // load functions of defined classes into Twig Environment
+        $this->twigMemberFunctions();
         // load functions of defined callables into Twig Environment
         $this->twigCallableFunctions();
         // load defined filters into Twig Environment
         $this->twigFilters();
+        // load defined globals into Twig Environment
+        $this->twigGlobals();
+
         return $this->_twig->render($path, $args);
     }
 
@@ -62,10 +67,35 @@ class View {
     private function twigStaticFunctions() {
         $classes = Config::twig('static_functions');
         foreach ($classes as $key => $cls) {
+            if (!is_numeric($key)) {
+                $as = $cls;
+                $cls = $key;
+            } else {
+                $as = strtolower(getClassBaseName($cls));
+            }
+
             $methods = get_class_methods($cls);
             foreach ($methods as $name) {
-                $newname = strtolower(getClassBaseName($cls)) . '_' . $name;
+                $newname = $as . '_' . $name;
                 $this->_twig->addFunction(new Twig_SimpleFunction($newname, [$cls, $name]));
+            }
+        }
+    }
+
+    private function twigMemberFunctions() {
+        $classes = Config::twig('member_functions');
+        foreach ($classes as $key => $cls) {
+            if (!is_numeric($key)) {
+                $as = $cls;
+                $cls = $key;
+            } else {
+                $as = strtolower(getClassBaseName($cls));
+            }
+
+            $methods = get_class_methods($cls);
+            foreach ($methods as $name) {
+                $newname = (empty($as) ? '' : $as . '_') . $name;
+                $this->_twig->addFunction(new Twig_SimpleFunction($newname, [(new Resolver)->resolve($cls), $name]));
             }
         }
     }
@@ -89,6 +119,21 @@ class View {
         $filters = Config::twig('filters');
         foreach ($filters as $name => $callable) {
             $this->_twig->addFilter(new Twig_SimpleFilter($name, $callable));
+        }
+    }
+
+    /**
+     * Loads the defined Globals into the Twig Environment
+     */
+    private function twigGlobals() {
+        $globals = Config::twig('globals');
+        foreach ($globals as $name => $value) {
+            if (!is_string($value) && is_callable($value)) {
+                $args = (new Resolver)->injectMethod($value);
+                $this->_twig->addGlobal($name, call_user_func_array($value, $args));
+            } else {
+                $this->_twig->addGlobal($name, $value);
+            }
         }
     }
 

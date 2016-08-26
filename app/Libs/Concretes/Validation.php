@@ -15,11 +15,6 @@ use function escape;
 
 class Validation {
 
-    public function __construct() {
-        twig()->addGlobal('v', $this);
-    }
-    
-    private $_errors = [];
     private $_msgs = [];
     private $zip = [
         "GB" => "GIR[ ]?0AA|((AB|AL|B|BA|BB|BD|BH|BL|BN|BR|BS|BT|CA|CB|CF|CH|CM|CO|CR|CT|CV|CW|DA|DD|DE|DG|DH|DL|DN|DT|DY|E|EC|EH|EN|EX|FK|FY|G|GL|GY|GU|HA|HD|HG|HP|HR|HS|HU|HX|IG|IM|IP|IV|JE|KA|KT|KW|KY|L|LA|LD|LE|LL|LN|LS|LU|M|ME|MK|ML|N|NE|NG|NN|NP|NR|NW|OL|OX|PA|PE|PH|PL|PO|PR|RG|RH|RM|S|SA|SE|SG|SK|SL|SM|SN|SO|SP|SR|SS|ST|SW|SY|TA|TD|TF|TN|TQ|TR|TS|TW|UB|W|WA|WC|WD|WF|WN|WR|WS|WV|YO|ZE)(\d[\dA-Z]?[ ]?\d[ABD-HJLN-UW-Z]{2}))|BFPO[ ]?\d{1,4}",
@@ -220,7 +215,8 @@ class Validation {
     public function check(array $data, array $param_rules = [], array $error_msgs = []) {
         $this->_msgs = $error_msgs;
         if (count($param_rules)) {
-            $this->_errors = [];
+        unset($_SESSION['errors']);
+       
             foreach ($param_rules as $param => $rules) {
                 $param = escape(trim($param));
                 $param_value = null;
@@ -412,42 +408,41 @@ class Validation {
                 }
             }
         }
-        
+
         return $this;
     }
 
     public function passed() {
-        if (empty($this->_errors)) {
+        if (empty($_SESSION['errors'])) {
             return true;
         }
         return false;
     }
 
     public function addError($field, $rule, $error) {
-        $this->_errors[$field][$rule] = (isset($this->_msgs[$field][$rule])) ? $this->_msgs[$field][$rule] : $error;
-
+        $_SESSION['errors'][$field][$rule] = (isset($this->_msgs[$field][$rule])) ? $this->_msgs[$field][$rule] : $error;
         return $this;
     }
 
     public function hasError($field, $rule = null) {
         if ($rule) {
-            return isset($this->_errors[$field][$rule]);
+            return isset($_SESSION['errors'][$field][$rule]);
         }
-        return isset($this->_errors[$field]);
+        return isset($_SESSION['errors'][$field]);
     }
 
     public function forgetError($field, $rule = null) {
         if ($rule) {
-            unset($this->_errors[$field][$rule]);
+            unset($_SESSION['errors'][$field][$rule]);
         }
-        unset($this->_errors[$field]);
+        unset($_SESSION['errors'][$field]);
     }
 
     public function withMsgs(array $error_msgs = []) {
         foreach ($error_msgs as $field => $rules) {
             foreach ($rules as $rule => $msg) {
-                if (isset($this->_errors[$field][$rule])) {
-                    $this->_errors[$field][$rule] = $msg;
+                if (isset($_SESSION['errors'][$field][$rule])) {
+                    $_SESSION['errors'][$field][$rule] = $msg;
                 }
             }
         }
@@ -455,18 +450,18 @@ class Validation {
     }
 
     public function getError($param, $rule = '') {
-        if (key_exists($param, $this->_errors)) {
-            if (isset($this->_errors[$param][$rule])) {
-                return $this->_errors[$param][$rule];
+        if (key_exists($param, $_SESSION['errors'])) {
+            if (isset($_SESSION['errors'][$param][$rule])) {
+                return $_SESSION['errors'][$param][$rule];
             }
-            return $this->_errors[$param];
+            return $_SESSION['errors'][$param];
         }
         return null;
     }
 
     public function getAllErrorMsgs() {
         $msgs = [];
-        foreach ($this->_errors as $param => $msg_arr) {
+        foreach ($_SESSION['errors'] as $param => $msg_arr) {
             foreach ($msg_arr as $msg) {
                 $msgs [] = $msg;
             }
@@ -475,10 +470,11 @@ class Validation {
     }
 
     public function getAllErrors() {
-        return $this->_errors;
+        return $_SESSION['errors'];
     }
-    
+
     public function getInstance() {
         return $this;
     }
+
 }

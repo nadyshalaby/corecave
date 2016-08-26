@@ -54,7 +54,7 @@ class Resolver {
      * @param string $method
      * @return array
      */
-    public function injectMethod($classOrCallable, $method = '') {
+    public function injectMethod($classOrCallable, $method = '',$default_params = []) {
         if (empty($method)) {
             $r = new ReflectionFunction($classOrCallable);
         } else if (is_array($classOrCallable)) {
@@ -71,10 +71,10 @@ class Resolver {
             if (!empty($cls)) {
                 $cls = $cls->getName();
                 if (class_exists($cls)) {
-                    $matches[$arg->getName()] = $this->resolve($cls);
+                    $matches[$arg->getName()] = isset($default_params[$arg->getName()]) ? $default_params[$arg->getName()] : $this->resolve($cls);
                 }
             } else {
-                $matches[$arg->getName()] = null;
+                $matches[$arg->getName()] = isset($default_params[$arg->getName()]) ? $default_params[$arg->getName()] : null;
             }
         }
         return $matches;

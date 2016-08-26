@@ -25,51 +25,54 @@ class __TwigTemplate_7aede4f6802c930cac47eec8fbf73d7df2d3e3188e68d758d1c1e48852d
         // line 2
         $context["data"] = call_user_func_array($this->env->getFunction('session_flash')->getCallable(), array("data"));
         // line 3
-        echo "<html lang=\"en\">
+        $context["v"] = call_user_func_array($this->env->getFunction('session_flash')->getCallable(), array("v"));
+        // line 4
+        echo "
+<html lang=\"en\">
     <head>
         <meta charset=\"UTF-8\"/>
         <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
         <title>Our First Hand</title>
         <link rel='stylesheet' href=\"";
-        // line 8
+        // line 10
         echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('url_pub')->getCallable(), array("admin/css/bootstrap.min.css")), "html", null, true);
         echo "\" />
         <link rel='stylesheet' href=\"";
-        // line 9
+        // line 11
         echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('url_pub')->getCallable(), array("admin/css/style.css")), "html", null, true);
         echo "\"/>
         <link rel='stylesheet' href=\"";
-        // line 10
+        // line 12
         echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('url_pub')->getCallable(), array("admin/css/font-awesome.min.css")), "html", null, true);
         echo "\"/>
         <link rel='stylesheet' href=\"";
-        // line 11
+        // line 13
         echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('url_pub')->getCallable(), array("admin/css/media.css")), "html", null, true);
         echo "\"/>
         <link rel='stylesheet' href=\"";
-        // line 12
+        // line 14
         echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('url_pub')->getCallable(), array("admin/css/animate.min.css")), "html", null, true);
         echo "\"/>
         <link rel='stylesheet' href=\"http://fonts.googleapis.com/css?family=Roboto:400,700,300\"/>
         ";
-        // line 14
+        // line 16
         $this->displayBlock('styles', $context, $blocks);
-        // line 15
+        // line 17
         echo "    </head>
 
     <body>
 
         ";
-        // line 19
+        // line 21
         $this->displayBlock('body', $context, $blocks);
-        // line 20
+        // line 22
         echo "        <footer class=\"footer\">
             <div class=\"container-fluid\">
                 <nav class=\"pull-left\">
                     <ul>
                         <li>
                             <a href=\"";
-        // line 25
+        // line 27
         echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('url_app')->getCallable(), array()), "html", null, true);
         echo "\">
                                 Home
@@ -84,7 +87,7 @@ class __TwigTemplate_7aede4f6802c930cac47eec8fbf73d7df2d3e3188e68d758d1c1e48852d
                 </nav>
                 <p class=\"copyright pull-right\">
                     &copy; 2016 <a href=\"";
-        // line 37
+        // line 39
         echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('url_app')->getCallable(), array()), "html", null, true);
         echo "\">Zakaa</a>, made with love for a better web
                 </p>
@@ -93,31 +96,31 @@ class __TwigTemplate_7aede4f6802c930cac47eec8fbf73d7df2d3e3188e68d758d1c1e48852d
     </div>
 </div>
 ";
-        // line 43
+        // line 45
         $this->displayBlock('modals', $context, $blocks);
-        // line 44
+        // line 46
         echo "
 <script src=\"";
-        // line 45
+        // line 47
         echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('url_pub')->getCallable(), array("admin/js/jquery-1.12.1.min.js")), "html", null, true);
         echo "\"></script>
 <script src=\"";
-        // line 46
+        // line 48
         echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('url_pub')->getCallable(), array("admin/js/bootstrap.min.js")), "html", null, true);
         echo "\"></script>
 <script src=\"";
-        // line 47
+        // line 49
         echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('url_pub')->getCallable(), array("admin/js/plugins.js")), "html", null, true);
         echo "\"></script>
 <script src=\"";
-        // line 48
+        // line 50
         echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('url_pub')->getCallable(), array("admin/js/jquery.nicescroll.js")), "html", null, true);
         echo "\"></script>
 
 ";
-        // line 50
+        // line 52
         $this->displayBlock('scripts', $context, $blocks);
-        // line 51
+        // line 53
         echo "</body>
 </html>
 
@@ -132,22 +135,22 @@ class __TwigTemplate_7aede4f6802c930cac47eec8fbf73d7df2d3e3188e68d758d1c1e48852d
 ";
     }
 
-    // line 14
+    // line 16
     public function block_styles($context, array $blocks = array())
     {
     }
 
-    // line 19
+    // line 21
     public function block_body($context, array $blocks = array())
     {
     }
 
-    // line 43
+    // line 45
     public function block_modals($context, array $blocks = array())
     {
     }
 
-    // line 50
+    // line 52
     public function block_scripts($context, array $blocks = array())
     {
     }
@@ -164,11 +167,13 @@ class __TwigTemplate_7aede4f6802c930cac47eec8fbf73d7df2d3e3188e68d758d1c1e48852d
 
     public function getDebugInfo()
     {
-        return array (  151 => 50,  146 => 43,  141 => 19,  136 => 14,  121 => 51,  119 => 50,  114 => 48,  110 => 47,  106 => 46,  102 => 45,  99 => 44,  97 => 43,  88 => 37,  73 => 25,  66 => 20,  64 => 19,  58 => 15,  56 => 14,  51 => 12,  47 => 11,  43 => 10,  39 => 9,  35 => 8,  28 => 3,  26 => 2,  23 => 1,);
+        return array (  154 => 52,  149 => 45,  144 => 21,  139 => 16,  124 => 53,  122 => 52,  117 => 50,  113 => 49,  109 => 48,  105 => 47,  102 => 46,  100 => 45,  91 => 39,  76 => 27,  69 => 22,  67 => 21,  61 => 17,  59 => 16,  54 => 14,  50 => 13,  46 => 12,  42 => 11,  38 => 10,  30 => 4,  28 => 3,  26 => 2,  23 => 1,);
     }
 }
 /* <!DOCTYPE html>*/
 /* {% set data = session_flash('data') %}*/
+/* {% set v = session_flash('v') %}*/
+/* */
 /* <html lang="en">*/
 /*     <head>*/
 /*         <meta charset="UTF-8"/>*/

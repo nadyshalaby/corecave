@@ -2,11 +2,11 @@
 
 {% block body %}
 
-{{ v.getError('nady','nady') }}
+
 <div class="row body">
     <div class="col-lg-6 col-lg-offset-3">
         <div class= "head text-capitalize text-center">
-            <p>welcom home! </p>
+            <p>welcome home! {{ hasError('password','required')}} </p>
         </div>
     </div>
     <div class="col-lg-6 col-lg-offset-3">
@@ -29,7 +29,7 @@
 
                             <label for="pass">Password</label>
 
-                            <input class="form-control" type="password" name="pass" id="pass" placeholder="Password">
+                            <input class="form-control" type="password" name="password" id="pass" placeholder="Password">
                         </div>
                         <div class="checkbox">
                             <label>

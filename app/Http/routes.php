@@ -30,11 +30,16 @@ R::get('/orders', [
     'name' => 'orders',
 ]);
 
-R::map('/signin',['controller'=>'Admin\\AuthController','name' => 'auth'], [
+R::map('/signin', [
+    'controller' => 'Admin\\AuthController',
+    'name' => 'auth',
+    'middleware' => 'RedirectIfAuthenticatedMiddleware'
+        ], [
     'index' => [
         'name' => 'signin',
     ],
     'signin' => [
-        'method' => 'post'
+        'method' => 'post',
+        'middleware' => 'SigninMiddleware'
     ]
 ]);
