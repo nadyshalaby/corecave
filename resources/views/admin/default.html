@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 {% set data = session_flash('data') %}
-{% set v = session_flash('v') %}
 
 <html lang="en">
     <head>
@@ -17,7 +16,30 @@
     </head>
 
     <body>
-
+        {% if session_has('success') %}
+        <div class="alert alert-success center-block text-center">
+            {{ session_flash('success') }}
+            <span class="close" data-dismiss='alert'>&times;</span>
+        </div>
+        {% endif %}
+        {% if session_has('error') %}
+        <div class="alert alert-danger center-block text-center">
+            {{ session_flash('error') }}
+            <span class="close" data-dismiss='alert'>&times;</span>
+        </div>
+        {% endif %}
+        {% if session_has('waring') %}
+        <div class="alert alert-waring center-block text-center">
+            {{ session_flash('waring') }}
+            <span class="close" data-dismiss='alert'>&times;</span>
+        </div>
+        {% endif %}
+        {% if session_has('info') %}
+        <div class="alert alert-info center-block text-center">
+            {{ session_flash('info') }}
+            <span class="close" data-dismiss='alert'>&times;</span>
+        </div>
+        {% endif %}
         {% block body %}{% endblock %}
         <footer class="footer">
             <div class="container-fluid">

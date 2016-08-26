@@ -15,7 +15,16 @@ use Illuminate\Support\Facades\Request;
  * - Router::get(...);
  * - R::get(...);
  */
-R::get('/', [
+R::map('/', ['controller' => 'Site\SiteController', 'name' => 'site',], [
+    'arabic' => [
+        'path' => 'ar',
+        'name' => 'arabic',
+    ],
+    'english' => [
+        'name' => 'english',
+    ],
+]);
+R::get('/admin', [
     'controller' => 'Admin\HomeController@index',
     'name' => 'home',
 ]);

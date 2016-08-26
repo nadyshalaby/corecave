@@ -1,0 +1,189 @@
+/*****************************************ARABIC Style**************************/
+@import url(http://fonts.googleapis.com/earlyaccess/droidarabickufi.css);
+body{
+    font-family: 'Droid Arabic Kufi';
+}
+
+@media (min-width: 768px){
+    .navbar-left {
+    float: left!important;
+}
+}
+.header .navbar-header h1{
+    margin-right: 5px
+}
+.header .navbar-header .brand-span{
+    right: 53px;
+}
+.header .under-nav p{
+    margin-top: 0;
+}
+.header .under-nav h1:before{
+    right: 30px;
+}
+.header .under-nav h1:after{
+    right: 0;
+}
+.our-services .fav-heading-2:after{
+    right: 0;
+}
+.our-services .serv i{
+    float: right;
+    margin-right: 0;
+    margin-left: 2%;
+}
+.our-services .serv .info{
+        width: 73%;
+    float: right;
+}
+.our-price .price-table .head h3{
+    padding-right: 10px;
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+.our-price .price-table .head span{
+    padding-right: 10px;
+}
+.our-price .price-table .head p{
+    right: inherit;
+    left: 25px;
+    top: 90px;
+}
+.our-price .price-table .body ul li{
+    padding-right: 10px;
+}
+.our-price .price-table .body ul li span{
+    left: 30px;
+    right: inherit;
+}
+.about .panel-default>.panel-heading span{
+    left: 10px;
+    right: inherit;
+}
+
+.contact .info span{
+    float: right;
+    margin-left: 5%;
+}
+.contact .info .colored{
+     margin-right: 24%;
+}
+.contact .info .colored p{
+    color: aliceblue;
+}
+.subscribe .form-control{
+        margin-left: -5px;
+}
+.fav-heading-2:after{
+    right: 0;
+}
+.footer .icon ul li{
+    float: right;
+}
+.footer .icon ul li a{
+    margin-left: 20px;
+    margin-right: inherit;
+}
+.footer .get-in-touch ul li i{
+    float: right;
+    margin-left: 20px;
+    margin-right: inherit;
+}
+.media-right, .media > .pull-right{
+    padding-left: 10px;
+    padding-right: initial;
+}
+
+
+@media (max-width: 495px){
+    .header .under-nav p{
+        font-size: 24px;
+         margin-top: 0;
+    }
+    .header .btn{
+        display: none;
+    }
+    .header .under-nav h1{
+        font-size: 35px;
+       
+    }
+}
+@media (min-width: 768px)
+{
+    .navbar-nav > li {
+    float: right !important;
+    margin-left: -10px;
+    margin-top: 4px;
+}
+}
+
+.load-page{
+    direction: ltr;
+}
+/*********************************Modal Arabic Style***********************/
+.modal-contentAr .nav-pills>li{
+    float: right;
+}
+
+.modal-contentAr .nav-pills>li:before, .nav-pills>li:after {
+    content: "";
+    position: absolute;
+    left: -10px;
+    border: 20px solid transparent;
+    border-left: 0;
+    border-right: 10px solid #e8e8e8;
+    border-right-color: rgba(0,0,0,0.05);
+    z-index: 1;
+}
+.modal-contentAr .nav-pills li:after {
+    left: -9px;
+    border-right-color: #f1f5f9;
+    z-index: 2;
+    top: 0;
+}
+
+/*******************************************************************************/
+
+.modal-contentAr .nav-pills>li.active>a,
+.modal-contentAr .nav-pills>li.active>a:focus, .modal-contentAr .nav-pills>li.active>a:hover{
+    background-color : #fff;
+    color: #337ab7;
+}
+.modal-contentAr .nav-pills>li a,
+.modal-contentAr .nav-pills>li a:focus, .modal-contentAr .nav-pills>li a:hover{
+    background-color : #f1f5f9;
+    color: #337ab7;
+}
+.modal-contentAr .nav-pills>li>a>.badge {
+    margin-right: -5px;
+    margin-left: 5px;
+    background-color: #2C7576;
+}
+.modal-contentAr .list-group-item.active>.badge, .modal-contentAr .nav-pills>.active>a>.badge{
+    color: #fff;
+    background-color: #2c7576;
+}
+
+.modal-contentAr .nav-pills>li>a {
+    border-radius: 0px;
+    margin-right: -2px;
+    padding-right: 20px;
+}
+
+.modal-contentAr .nav-pills li.active:after{
+    border-right-color: #fff;
+}
+
+
+/***********************/
+
+
+
+
+/*****************************************************************************/
+
+#modal-contentAr .modal-footer span{
+    float: left;
+    margin-right: 7px;
+    margin-top: 3px;
+}

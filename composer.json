@@ -1,8 +1,8 @@
 {
-    "name": "taekunger/kodekit",
-    "description": "Custom PHP micro-framework for developing any kind of application simple or complex supports Security against CSRF, XSS, SQL Injection ....etc , supports Kint dumping library",
-    "keywords": ["framework", "kodekit"],
-    "homepage": "https://github.com/taekunger/KodeKit",
+    "name": "taekunger/corecave",
+    "description": "Custom PHP micro-framework for developing any kind of application simple or complex, supports the latest web technologies ",
+    "keywords": ["framework", "corecave"],
+    "homepage": "https://github.com/taekunger/corecave",
     "license": "MIT",
     "type": "project",
     "authors": [

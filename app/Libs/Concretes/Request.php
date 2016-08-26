@@ -15,7 +15,6 @@ use App\Libs\Statics\Cookie;
 use App\Libs\Statics\Session;
 use App\Libs\Statics\Url;
 use Locale;
-use function arr2obg;
 
 class Request {
 
@@ -57,10 +56,18 @@ class Request {
 
     public function removeParam($name) {
         unset($_REQUEST[$name]);
+        return $this;
     }
 
-    public function appendParam($name, $value) {
+    public function appendParam($name, $value = null) {
+        if (is_array($name)) {
+            foreach ($array as $key => $val) {
+
+                $_REQUEST[$key] = $val;
+            }
+        }
         $_REQUEST[$name] = $value;
+        return $this;
     }
 
     public function getFile($name, $as_arr = false) {
@@ -86,20 +93,21 @@ class Request {
     }
 
     public function __get($name) {
-        if($this->hasParam($name)){
+        if ($this->hasParam($name)) {
             return $this->getParam($name);
         }
-        
-        if($this->hasFile($name)){
+
+        if ($this->hasFile($name)) {
             return $this->getFile($name);
         }
-        
+
         return null;
     }
-    
+
     public function __set($name, $value) {
         $this->appendParam($name, $value);
     }
+
     public function getFullUrl($use_forwarded_host = false) {
         return $this->getBaseUrl($_SERVER, $use_forwarded_host) . $_SERVER['REQUEST_URI'];
     }
@@ -202,48 +210,28 @@ class Request {
     public function getPrevUrl() {
         return ($this->SERVER('HTTP_REFERER')) ? $this->SERVER('HTTP_REFERER') : Url::app();
     }
-    
-    public function hasCookie($name){
+
+    public function hasCookie($name) {
         return Cookie::has($name);
     }
-    
-    public function getCookie($name){
+
+    public function getCookie($name) {
         return Cookie::get($name);
     }
-    
-    public function putCookie($name, $value, $expiry,$path = '/',$domain = null){
-        return Cookie::put($name, $value, $expiry,$path,$domain);
-    }
-    
-    public function forgetCookie($name){
-        return Cookie::delete($name);
-    }
-    
-    public function allCookies($as_arr = false){
+
+    public function allCookies($as_arr = false) {
         return Cookie::all($as_arr);
     }
-    
-    public function hasSession($name){
+
+    public function hasSession($name) {
         return Session::has($name);
     }
-    
-    public function getSession($name){
+
+    public function getSession($name) {
         return Session::get($name);
     }
-    
-    public function putSession($name, $value){
-        return Session::put($name, $value);
-    }
-    
-    public function forgetSession($name){
-         Session::delete($name);
-    }
-    
-    public function flash($name,$content = null){
-        return Session::flash($name , $content);
-    }
-    
-    public function allSession($as_arr = false){
+
+    public function allSession($as_arr = false) {
         return Session::all($as_arr);
     }
 

@@ -251,7 +251,7 @@ class Router {
     public function __destruct() {
 
         if (Config::app('maintenance') === true) {
-            Response::error(503, "Be Right Back Soon!");
+            Response::withError(503, "Be Right Back Soon!");
         }
 
         $app_middleware = Config::app('app_middleware');
@@ -313,7 +313,7 @@ class Router {
                         }
                     }
                 }
-                Response::error(404);
+                Response::withError(404,'Page Not Found.');
             } else {
                 throw new BadRequestException('Unauthorized: Access is denied, REQUEST_METHOD not found');
             }

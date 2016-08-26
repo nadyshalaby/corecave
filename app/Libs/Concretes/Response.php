@@ -12,9 +12,9 @@
 namespace App\Libs\Concretes;
 
 use App\Libs\Statics\Config;
+use App\Libs\Statics\Cookie;
+use App\Libs\Statics\Session;
 use App\Libs\Statics\Url;
-use function GuzzleHttp\json_encode;
-use function twig;
 
 class Response {
 
@@ -74,8 +74,9 @@ class Response {
     const TYPE_xml = 'application/xml';
     const TYPE_zip = 'application/zip, application/x-compressed-zip';
 
-    public function setHeader($name, $value) {
+    public function withHeader($name, $value) {
         header("$name: $value");
+        return $this;
     }
 
     /**
@@ -100,6 +101,8 @@ class Response {
             return;
         }
         header("Location: $location");
+
+        return $this;
     }
 
     /**
@@ -114,6 +117,7 @@ class Response {
         } else {
             $this->redirectTo(Url::app(), $with, $after);
         }
+        return $this;
     }
 
     /**
@@ -123,14 +127,15 @@ class Response {
      */
     public function refresh($after = 0) {
         $this->after($after, $_SERVER['SCRIPT_URI']);
+        return $this;
     }
 
-    public function json($data) {
+    public function withJson($data) {
         $this->setContentType(self::TYPE_json);
-        echo json_encode($data);
+        return json_encode($data);
     }
 
-    public function error($code, $default_message = '') {
+    public function withError($code, $default_message = '') {
         if (is_numeric($code)) {
             $txt = '';
             switch ($code) {
@@ -173,14 +178,48 @@ class Response {
 
     public function setContentLength($long) {
         header("Content-Length: $long");
+        return $this;
+    }
+
+    public function withSession($name, $value = null) {
+        if (is_array($name)) {
+            foreach ($name as $key => $val) {
+                Session::put($key, $val);
+            }
+        } else {
+            Session::put($name, $value);
+        }
+        return $this;
+    }
+
+    public function forgetSession($name) {
+        Session::delete($name);
+        return $this;
+    }
+
+    public function withCookie($name, $value, $expiry, $path = '/', $domain = null) {
+        Cookie::put($name, $value, $expiry, $path, $domain);
+        return $this;
+    }
+
+    public function forgetCookie($name) {
+        Cookie::delete($name);
+        return $this;
+    }
+
+    public function flash($name, $content = null) {
+        Session::flash($name, $content);
+        return $this;
     }
 
     public function setContentType($type, $charset = 'utf-8') {
         header("Content-Type: $type; charset=$charset");
+        return $this;
     }
 
     public function setContentTypeForFile($filename) {
         header("Content‐Type: " . mime_content_type($filename));
+        return $this;
     }
 
     public function download($filepath, $filename = '', $open_in_browser = false) {
@@ -207,6 +246,7 @@ class Response {
         header('Expires: 0');
         header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
         echo $content;
+        return $this;
     }
 
 }

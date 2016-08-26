@@ -22,7 +22,7 @@ function route($name, $args = []) {
 }
 
 function flash($name, $content = null) {
-    return Session::flash($name, $content);
+    return Response::flash($name, $content);
 }
 
 function validate(array $data = null, array $param_rules = [], array $error_msgs = []) {
@@ -33,15 +33,15 @@ function validate(array $data = null, array $param_rules = [], array $error_msgs
 }
 
 function redirect($location, $with = [], $after = 0) {
-    Response::redirectTo($location, $with, $after);
+    return Response::redirectTo($location, $with, $after);
 }
 
 function goBack($with = [], $after = 0) {
-    Response::redirectBack($with, $after);
+    return Response::redirectBack($with, $after);
 }
 
 function refresh($after = 0) {
-    Response::refresh($after);
+    return Response::refresh($after);
 }
 
 function escape($string) {

@@ -215,8 +215,8 @@ class Validation {
     public function check(array $data, array $param_rules = [], array $error_msgs = []) {
         $this->_msgs = $error_msgs;
         if (count($param_rules)) {
-        unset($_SESSION['errors']);
-       
+            unset($_SESSION['errors']);
+
             foreach ($param_rules as $param => $rules) {
                 $param = escape(trim($param));
                 $param_value = null;
@@ -425,14 +425,20 @@ class Validation {
     }
 
     public function hasError($field, $rule = null) {
-        if ($rule) {
+        if (empty($_SESSION['errors'])) {
+            return false;
+        }
+        if (!isset($_SESSION['errors'][$field])) {
+            return false;
+        }
+        if (!empty($rule)) {
             return isset($_SESSION['errors'][$field][$rule]);
         }
-        return isset($_SESSION['errors'][$field]);
+        return true;
     }
 
     public function forgetError($field, $rule = null) {
-        if ($rule) {
+        if (!empty($rule)) {
             unset($_SESSION['errors'][$field][$rule]);
         }
         unset($_SESSION['errors'][$field]);
@@ -441,7 +447,7 @@ class Validation {
     public function withMsgs(array $error_msgs = []) {
         foreach ($error_msgs as $field => $rules) {
             foreach ($rules as $rule => $msg) {
-                if (isset($_SESSION['errors'][$field][$rule])) {
+                if ($this->hasError($field, $rule)) {
                     $_SESSION['errors'][$field][$rule] = $msg;
                 }
             }
@@ -449,17 +455,17 @@ class Validation {
         return $this;
     }
 
-    public function getError($param, $rule = '') {
-        if (key_exists($param, $_SESSION['errors'])) {
-            if (isset($_SESSION['errors'][$param][$rule])) {
-                return $_SESSION['errors'][$param][$rule];
-            }
-            return $_SESSION['errors'][$param];
+    public function getError($param, $rule = null) {
+        if (!$this->hasError($param)) {
+            return null;
         }
-        return null;
+        if (!empty($rule)) {
+            return $this->hasError($param, $rule) ? $_SESSION['errors'][$param][$rule] : null;
+        }
+        return $_SESSION['errors'][$param];
     }
 
-    public function getAllErrorMsgs() {
+    public function getErrorMsgs() {
         $msgs = [];
         foreach ($_SESSION['errors'] as $param => $msg_arr) {
             foreach ($msg_arr as $msg) {
@@ -469,8 +475,8 @@ class Validation {
         return $msgs;
     }
 
-    public function getAllErrors() {
-        return $_SESSION['errors'];
+    public function getErrors() {
+        return isset($_SESSION['errors']) ? $_SESSION['errors'] : null;
     }
 
     public function getInstance() {
