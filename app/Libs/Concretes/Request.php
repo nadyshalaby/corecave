@@ -34,8 +34,24 @@ class Request {
         return ($this->isPost() && $this->getParam('_method') === 'DELETE') ? true : false;
     }
 
+    public function isForeign() {
+        $myDomain = $this->getFullUrl();
+        $requestsSource = $this->getPrevUrl();
+
+        return parse_url($myDomain, PHP_URL_HOST) !== parse_url($requestsSource, PHP_URL_HOST);
+    }
+
     public function getParam($name) {
         return ($this->hasParam($name)) ? ($_REQUEST[$name]) : null;
+    }
+
+    public function pullParam($name) {
+        if ($this->hasParam($name)) {
+            $param = $this->getParam($name);
+            $this->forgetParam($name);
+            return $param;
+        }
+        return null;
     }
 
     public function hasParam($name) {
@@ -54,7 +70,7 @@ class Request {
         return ($as_obj) ? arr2obg($_REQUEST) : $_REQUEST;
     }
 
-    public function removeParam($name) {
+    public function forgetParam($name) {
         unset($_REQUEST[$name]);
         return $this;
     }
@@ -77,9 +93,23 @@ class Request {
         return null;
     }
 
+    public function forgetFile($name) {
+        unset($_FILES[$name]);
+        return $this;
+    }
+
     public function getFiles($as_arr = false) {
         if ($_FILES) {
             return (!$as_arr) ? arr2obg($_FILES) : $_FILES;
+        }
+        return null;
+    }
+
+    public function pullFile($name) {
+        if ($this->hasFile($name)) {
+            $File = $this->getFile($name);
+            $this->forgetFile($name);
+            return $File;
         }
         return null;
     }
@@ -208,7 +238,7 @@ class Request {
      * @return (type) (description)
      */
     public function getPrevUrl() {
-        return ($this->SERVER('HTTP_REFERER')) ? $this->SERVER('HTTP_REFERER') : Url::app();
+        return ($this->SERVER('HTTP_REFERER')) ? $this->SERVER('HTTP_REFERER') : null;
     }
 
     public function hasCookie($name) {
@@ -333,7 +363,7 @@ class Request {
         return $this->browser('device_name');
     }
 
-    public function isSecure($param) {
+    public function isSecure() {
         if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
             return true;
         }
@@ -363,7 +393,7 @@ class Request {
      * @return (type)      (description)
      */
     public function SERVER($key) {
-        return (isset($_SERVER[$key])) ? $_SERVER[$key] : '';
+        return (isset($_SERVER[$key])) ? $_SERVER[$key] : null;
     }
 
 }

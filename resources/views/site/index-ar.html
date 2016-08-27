@@ -28,7 +28,7 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a href="#"><h1>ذكاء</h1></a><span class="brand-span">للبرمجيات</span><img class="navbar-brand img-circle" src="{{ url_pub('site/images/logo.png') }}" alt="logo">
+                            <a href="{{ url_route('site.arabic') }}"><h1>ذكاء</h1></a><span class="brand-span">للبرمجيات</span><img class="navbar-brand img-circle" src="{{ url_pub('site/images/logo.png') }}" alt="logo">
                         </div>
 
                         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -40,7 +40,7 @@
                                 <li><a  data-value ="offers">العروض</a></li>
                                 <li><a  data-value ="about">عن الشركة</a></li>
                                 <li><a  data-value ="contact">تواصل معنا</a></li>
-                                <li><a href="#">انجليزى</a></li>
+                                <li><a href="{{ url_route('site.english') }}">انجليزى</a></li>
                             </ul>
                         </div><!-- /.navbar-collapse -->
                     </div><!-- /.container-fluid -->
@@ -769,7 +769,7 @@
                 </div>
             </div>
             <div class="copyright text-center">
-                جميع الحقوق محفوظة لشركة ذكاء &copy; 2016  <span> <a href ="#" target="_blank"> Zakaa<span>.inc</span></a></span>
+                جميع الحقوق محفوظة لشركة ذكاء &copy; 2016  <span> <a href ="{{ url_route('site.arabic') }}" target="_blank"> Zakaa<span>.inc</span></a></span>
             </div>
         </section>
 
@@ -938,8 +938,8 @@
         <script src="{{ url_pub('site/js/plugins.js') }}"></script>
         <script src="{{ url_pub('site/js/jquery.nicescroll.js') }}"></script>
         <script src="{{ url_pub('site/js/jquery.mixitup.js') }}"></script>
-             <!--<script src="https://code.jquery.com/jquery-1.11.3.js"></script>-->
         <script src="{{ url_pub('site/js/jquery.crs.min.js') }}"></script>
+        
     </body>
 </html>
 

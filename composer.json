@@ -22,15 +22,15 @@
                 "twig/twig": "^1.24",
                 "symfony/var-dumper": "*",
                 "nesbot/carbon": "^1.21",
-        "illuminate/database": "^5.2",
-        "illuminate/events": "^5.2"
+                "illuminate/database": "^5.2",
+                "illuminate/events": "^5.2"
             },
     "autoload": {
         "psr-4": {
             "App\\": "app"
         },
         "classmap": [
-            "resources/I18N/Arabic.php"
+            "storage/I18N/Arabic.php"
         ],
         "files": [
             "bootstrap/init.php",

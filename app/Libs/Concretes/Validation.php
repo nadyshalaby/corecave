@@ -419,6 +419,26 @@ class Validation {
         return false;
     }
 
+    public function pullError($field, $rule = null){
+        if($this->hasError($field,$rule)){
+            $error = $this->getError($field,$rule);
+            $this->forgetError($field, $rule);
+            return $error;
+        }
+        
+        if($this->hasError($field)){
+            $error = $this->getError($field);
+            $this->forgetError($field);
+            return $error;
+        }
+        
+        return null;
+    }
+    
+    public function clearErrors(){
+        unset($_SESSION['errors']);
+    }
+
     public function addError($field, $rule, $error) {
         $_SESSION['errors'][$field][$rule] = (isset($this->_msgs[$field][$rule])) ? $this->_msgs[$field][$rule] : $error;
         return $this;
@@ -438,10 +458,15 @@ class Validation {
     }
 
     public function forgetError($field, $rule = null) {
-        if (!empty($rule)) {
+        if ($this->hasError($field, $rule)) {
             unset($_SESSION['errors'][$field][$rule]);
+            return true;
         }
-        unset($_SESSION['errors'][$field]);
+        if ($this->hasError($field)) {
+            unset($_SESSION['errors'][$field]);
+            return true;
+        }
+        return false;
     }
 
     public function withMsgs(array $error_msgs = []) {

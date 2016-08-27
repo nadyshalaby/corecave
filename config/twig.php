@@ -6,7 +6,7 @@ use Carbon\Carbon;
 
 return [
     'config' => [
-        'cache' => path('resources.cache'),
+        'cache' => path('storage.cache'),
         'debug' => true, //used for development purposes 
     // 'auto_reload' => true, // if it didn't set it will be determined from the value of debug option
     ],

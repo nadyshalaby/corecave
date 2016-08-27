@@ -65,12 +65,11 @@ function array_fetch(array $array, $path_to_key, $default = null) {
         if (isset($array[$key])) {
             $array = $array[$key];
         } else {
-            $array = null;
-            break;
+            return $default;
         }
     }
 
-    return $array ? $array : $default;
+    return $array;
 }
 
 function array_merge_mixed() {

@@ -49,11 +49,43 @@ class Router {
     }
 
     public function ajax($path, $callableOrOptions, $name = null, $with = [], $middleware = null, $token = true) {
-        return $this->addRoute($path, $callableOrOptions, $name, 'AJAX', $with, $middleware, $token);
+        return $this->addRoute($path, $callableOrOptions, $name, "AJAX|POST", $with, $middleware, $token);
+    }
+
+    public function ajaxPOST($path, $callableOrOptions, $name = null, $with = [], $middleware = null, $token = true) {
+        return $this->addRoute($path, $callableOrOptions, $name, "AJAX|POST", $with, $middleware, $token);
+    }
+
+    public function ajaxGET($path, $callableOrOptions, $name = null, $with = [], $middleware = null, $token = true) {
+        return $this->addRoute($path, $callableOrOptions, $name, "AJAX|GET", $with, $middleware, $token);
+    }
+
+    public function ajaxPUT($path, $callableOrOptions, $name = null, $with = [], $middleware = null, $token = true) {
+        return $this->addRoute($path, $callableOrOptions, $name, "AJAX|PUT", $with, $middleware, $token);
+    }
+
+    public function ajaxHEAD($path, $callableOrOptions, $name = null, $with = [], $middleware = null, $token = true) {
+        return $this->addRoute($path, $callableOrOptions, $name, "AJAX|HEAD", $with, $middleware, $token);
+    }
+
+    public function ajaxDELETE($path, $callableOrOptions, $name = null, $with = [], $middleware = null, $token = true) {
+        return $this->addRoute($path, $callableOrOptions, $name, "AJAX|DELETE", $with, $middleware, $token);
+    }
+
+    public function ajaxOPTIONS($path, $callableOrOptions, $name = null, $with = [], $middleware = null, $token = true) {
+        return $this->addRoute($path, $callableOrOptions, $name, "AJAX|OPTIONS", $with, $middleware, $token);
     }
 
     public function delete($path, $callableOrOptions, $name = null, $with = [], $middleware = null, $token = true) {
         return $this->addRoute($path, $callableOrOptions, $name, 'DELETE', $with, $middleware, $token);
+    }
+
+    public function head($path, $callableOrOptions, $name = null, $with = [], $middleware = null, $token = true) {
+        return $this->addRoute($path, $callableOrOptions, $name, 'HEAD', $with, $middleware, $token);
+    }
+
+    public function options($path, $callableOrOptions, $name = null, $with = [], $middleware = null, $token = true) {
+        return $this->addRoute($path, $callableOrOptions, $name, 'OPTIONS', $with, $middleware, $token);
     }
 
     public function map($prefix = '', $options = [], $routes = []) {
@@ -153,9 +185,6 @@ class Router {
                 case 'GET':
                     $this->get($path, $callableOrOptions);
                     break;
-                case 'AJAX':
-                    $this->ajax($path, $callableOrOptions);
-                    break;
                 case 'POST':
                     $this->post($path, $callableOrOptions);
                     break;
@@ -165,6 +194,30 @@ class Router {
                 case 'DELETE':
                     $this->delete($path, $callableOrOptions);
                     break;
+                case 'HEAD':
+                    $this->head($path, $callableOrOptions);
+                    break;
+                case 'OPTIONS':
+                    $this->options($path, $callableOrOptions);
+                    break;
+                case 'AJAX|POST':
+                    $this->ajax($path, $callableOrOptions);
+                    break;
+                case 'AJAX|GET':
+                    $this->ajaxGET($path, $callableOrOptions);
+                    break;
+                case 'AJAX|HEAD':
+                    $this->ajaxHEAD($path, $callableOrOptions);
+                    break;
+                case 'AJAX|DELETE':
+                    $this->ajaxDELETE($path, $callableOrOptions);
+                    break;
+                case 'AJAX|OPTIONS':
+                    $this->ajaxOPTIONS($path, $callableOrOptions);
+                    break;
+                case 'AJAX|PUT':
+                    $this->ajaxPUT($path, $callableOrOptions);
+                    break;
             }
         }
     }
@@ -172,9 +225,16 @@ class Router {
     public function any($path, $callableOrOptions, $name = null, $with = [], $middleware = null, $token = true) {
         $this->get($path, $callableOrOptions, $name, $with, $middleware, $token);
         $this->ajax($path, $callableOrOptions, $name, $with, $middleware, $token);
+        $this->ajaxPUT($path, $callableOrOptions, $name, $with, $middleware, $token);
+        $this->ajaxDELETE($path, $callableOrOptions, $name, $with, $middleware, $token);
+        $this->ajaxGET($path, $callableOrOptions, $name, $with, $middleware, $token);
+        $this->ajaxHEAD($path, $callableOrOptions, $name, $with, $middleware, $token);
+        $this->ajaxOPTIONS($path, $callableOrOptions, $name, $with, $middleware, $token);
         $this->post($path, $callableOrOptions, $name, $with, $middleware, $token);
         $this->put($path, $callableOrOptions, $name, $with, $middleware, $token);
         $this->delete($path, $callableOrOptions, $name, $with, $middleware, $token);
+        $this->head($path, $callableOrOptions, $name, $with, $middleware, $token);
+        $this->options($path, $callableOrOptions, $name, $with, $middleware, $token);
     }
 
     private function addRoute($path, $callableOrOptions, $name, $method, $with, $middleware, $token) {
@@ -272,7 +332,6 @@ class Router {
             if (isset($_SERVER['REQUEST_METHOD'])) {
 
                 $request_method = $_SERVER['REQUEST_METHOD'];
-                $request_method = (Request::isAjax()) ? 'AJAX' : $request_method;
                 $inputFlag = Request::hasParam('_token');
 
                 // check the request method if PUT, DELETE or POST 
@@ -281,8 +340,11 @@ class Router {
                         $request_method = $_POST['_method'];
                     }
                 }
+
+                $request_method = (Request::isAjax()) ? "AJAX|$request_method" : $request_method;
+
                 // check if the request method not supported
-                if (!in_array($request_method, ['POST', 'GET', 'PUT', 'AJAX', 'DELETE'])) {
+                if (!in_array($request_method, ['POST', 'GET', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'AJAX|POST', 'AJAX|GET', 'AJAX|HEAD', 'AJAX|PUT', 'AJAX|DELETE', 'AJAX|OPTIONS',])) {
                     throw new BadRequestException('Unauthorized: Access is denied, REQUEST_METHOD not found');
                 }
 
@@ -304,22 +366,25 @@ class Router {
                             // executes the requested route 
                             $res = $route->exec();
                             if (is_string($res)) {
-                                echo $res;
+                                // execute terminate script
+                                require path('bootstrap.terminate.php');
+                                // print results
+                                print $res;
                             } else if (!is_null($res)) {
-                                dd($res);
+                                Response::withJson($res);
                             }
-
-                            return;
+                                
+                            exit;
                         }
                     }
                 }
-                Response::withError(404,'Page Not Found.');
+                Response::withError(404, 'Page Not Found.');
             } else {
                 throw new BadRequestException('Unauthorized: Access is denied, REQUEST_METHOD not found');
             }
         } catch (Exception $exc) {
             die($exc->getMessage() . ' please go <a href="' . Request::getPrevUrl() . '">back.</a>');
-        } 
+        }
     }
 
 }
@@ -372,6 +437,7 @@ class Route {
         }
 
         return Middleware::chain($this->middleware, [$this, 'call']);
+   
     }
 
     public function with($param, $pattern) {

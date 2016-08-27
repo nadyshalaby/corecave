@@ -1,7 +1,8 @@
 <?php
 
-use App\Libs\Concretes\Middleware;
-use Illuminate\Support\Facades\Request;
+use App\Libs\Concretes\Request;
+use App\Libs\Concretes\Response;
+use App\Models\User;
 
 /**
  * For Routing you can use: 
@@ -15,7 +16,15 @@ use Illuminate\Support\Facades\Request;
  * - Router::get(...);
  * - R::get(...);
  */
-R::map('/', ['controller' => 'Site\SiteController', 'name' => 'site',], [
+R::ajax('/users', [
+    'controller' => function (Request $r, Response $res) {
+        $user = User::where('email', $r->getParam('email'))->first()->toArray();
+        return $res->withJson($user);
+    },
+    'token' => false,
+]);
+
+R::map('/', ['controller' => 'Site\SiteController', 'name' => 'site', 'middleware' => 'LocaleMiddleware'], [
     'arabic' => [
         'path' => 'ar',
         'name' => 'arabic',

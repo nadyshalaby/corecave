@@ -130,9 +130,9 @@ class Response {
         return $this;
     }
 
-    public function withJson($data) {
+    public function withJson() {
         $this->setContentType(self::TYPE_json);
-        return json_encode($data);
+        return json_encode(func_get_args());
     }
 
     public function withError($code, $default_message = '') {
@@ -194,6 +194,11 @@ class Response {
 
     public function forgetSession($name) {
         Session::delete($name);
+        return $this;
+    }
+    
+    public function flushSessions() {
+        Session::flush();
         return $this;
     }
 

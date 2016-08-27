@@ -13,12 +13,21 @@ namespace App\Libs\Statics;
 
 abstract class Cookie {
 
-    public static function put($name, $value, $expiry,$path = '/',$domain = null) {
+    public static function put($name, $value, $expiry, $path = '/', $domain = null) {
         if (is_numeric($expiry)) {
-            return (setcookie($name, $value, time() + $expiry, $path ,$domain)) ? true : false;
+            return (setcookie($name, $value, time() + $expiry, $path, $domain, isset($_SERVER['HTTPS']), true)) ? true : false;
         } else {
-            return (setcookie($name, $value, strtotime($expiry), $path,$domain)) ? true : false;
+            return (setcookie($name, $value, strtotime($expiry), $path, $domain, isset($_SERVER['HTTPS']), true)) ? true : false;
         }
+    }
+
+    public static function pull($key) {
+        if (self::has($name)) {
+            $res = $_COOKIE[$name];
+            self::delete($name);
+            return $res;
+        }
+        return null;
     }
 
     public static function delete($name) {
