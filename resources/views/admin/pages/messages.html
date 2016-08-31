@@ -20,29 +20,28 @@
                             <div class="btn-group" data-toggle="buttons">
 
                                 <label class="btn btn-sm btn-default" title="Inbox Messages">
-                                    <input type="radio" name="options" id="" autocomplete="off" > 
-                                    <i class="fa fa-envelope text-success"></i>
+                                    <input type="radio" name="options" class="msg-filter" data-filter="all" autocomplete="off" > 
                                     All
                                 </label>
                                 <label class="btn btn-sm btn-default" title="Read Messages">
-                                    <input type="radio" name="options" id="" autocomplete="off">
+                                    <input type="radio" name="options"  class="msg-filter" data-filter="seen" autocomplete="off">
                                     <i class="fa fa-eye text-success"></i>
                                     Read
                                 </label>
                                 <label class="btn btn-sm btn-default" title="Unread Messages">
-                                    <input type="radio" name="options" id="" autocomplete="off">
+                                    <input type="radio" name="options" class="msg-filter" data-filter="unseen" autocomplete="off">
                                     <i class="fa fa-eye-slash text-danger"></i>
                                     Unread
                                 </label>
                                 <label class="btn btn-sm btn-default" title="Today messages">
-                                    <input type="radio" name="options" id="" autocomplete="off">
+                                    <input type="radio" name="options" class="msg-filter" data-filter="today" autocomplete="off">
                                     <i class="fa fa-bell text-info "></i>
                                     Today
                                 </label>
-                                <label class="btn btn-sm btn-default" title="Sent Messages">
-                                    <input type="radio" name="options" id="" autocomplete="off">
+                                <label class="btn btn-sm btn-default" title="Foreign Messages">
+                                    <input type="radio" name="options" class="msg-filter" data-filter="foreign" autocomplete="off">
                                     <i class="fa fa-send text-success"></i>
-                                    Sent
+                                    Foreign
                                 </label>
                             </div>
                         </div>
@@ -53,9 +52,9 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                    <li><a href="#">Mark as read &nbsp;<span><i class="fa fa-eye text-success"></i></span></a></li>
-                                    <li><a href="#">Mark as unread &nbsp;<span><i class="fa fa-eye-slash text-danger"></i></span></a></li>
-                                    <li><a href="#">Mark as Spam &nbsp;<span><i class="fa fa-bomb text-danger"></i></span></a></li>
+                                    <li><a href="#" class="btn-action" data-url="messages" data-action="seen"><span><i class="fa fa-eye text-primary"></i></span> &nbsp;Seen  </a></li>
+                                    <li><a href="#" class="btn-action" data-url="messages" data-action="unseen"><span><i class="fa fa-eye-slash text-danger"></i></span> &nbsp;Un Seen  </a></li>
+                                    <li><a href="#" class="btn-action" data-url="messages" data-action="deleted"><span><i class="fa fa-trash text-info"></i></span> &nbsp;Deleted </a></li>
                                 </ul>
                             </div>
 
@@ -63,18 +62,21 @@
                     </div> 
                     <div class=" ser-a-del col-md-4 col-xs-4">
 
-                        <div class="col-md-8  col-xs-8">
-                            <div class="input-group">
-                                <input type="text" class="form-control input-sm" placeholder="Search for...">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-sm btn-success" type="button">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </span>
-                            </div>
+                        <div class="col-xs-8 inner-col">
+                            <form id="form-search" onsubmit="return false;">
+                                <div class="input-group">
+                                    <input type="text" class="form-control input-sm" name="q" placeholder="Search for...">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-sm btn-success btn-search" data-search="messages" type="button">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                                {{ token_input() |raw}}
+                            </form>
                         </div>
                         <div class="addNew col-md-4 bcol-xs-4">
-                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-delete"> 
+                            <button type="button" class="btn btn-danger btn-sm btn-action" data-url="messages" data-action="deleted"> 
                                 <i class="fa fa-trash"></i>
                                 Delete
                             </button>
@@ -83,135 +85,48 @@
                 </div>
                 <div class="row">
                     <div class="table-responsive">
-                        <table class="table table-hover table-orders">
-                            <thead>
-                                <tr>
-                                    <th id="ID">
-                                        <input id="CheckAll" type="checkbox">
-                                    </th>
-                                    <th>Name</th><th>Email</th><th>Date</th><th>Body</th><th>Operations</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="un-seen">
-                                    <td class="ID">
-                                        <input name="check" class="chk-box" id="" value="" type="checkbox">
-                                    </td>
-                                    <td>Ahmed</i></td>
-                                    <td>Ahmed@yahoo.com</td>
-                                    <td><small>17/02/2016</small></td>
-                                    <td><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus</p></td>
-                                    <td><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-message"> 
-                                            <i class="fa fa-eye"></i>
-                                            View
-                                        </button></td>
-                                </tr>
-                                <tr class="un-seen">
-                                    <td class="ID">
-                                        <input name="check" class="chk-box" id="" value="" type="checkbox">
-                                    </td>
-                                    <td>Ahmed</i></td>
-                                    <td>Ahmed@yahoo.com</td>
-                                    <td><small>17/02/2016</small></td>
-                                    <td><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus</p></td>
-                                    <td><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-message"> 
-                                            <i class="fa fa-eye"></i>
-                                            View
-                                        </button></td>
-                                </tr>
-                                <tr class="un-seen">
-                                    <td class="ID">
-                                        <input name="check" class="chk-box" id="" value="" type="checkbox">
-                                    </td>
-                                    <td>Ahmed</i></td>
-                                    <td>Ahmed@yahoo.com</td>
-                                    <td><small>17/02/2016</small></td>
-                                    <td><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus</p></td>
-                                    <td><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-message"> 
-                                            <i class="fa fa-eye"></i>
-                                            View
-                                        </button></td>
-                                </tr>
-                                <tr class="spam">
-                                    <td class="ID">
-                                        <input name="check" class="chk-box" id="" value="" type="checkbox">
-                                    </td>
-                                    <td>Ahmed</i></td>
-                                    <td>Ahmed@yahoo.com</td>
-                                    <td><small>17/02/2016</small></td>
-                                    <td><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus</p></td>
-                                    <td><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-message"> 
-                                            <i class="fa fa-eye"></i>
-                                            View
-                                        </button></td>
-                                </tr>
-                                <tr class="">
-                                    <td class="ID">
-                                        <input name="check" class="chk-box" id="" value="" type="checkbox">
-                                    </td>
-                                    <td>Ahmed</i></td>
-                                    <td>Ahmed@yahoo.com</td>
-                                    <td><small>17/02/2016</small></td>
-                                    <td><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus</p></td>
-                                    <td><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-message"> 
-                                            <i class="fa fa-eye"></i>
-                                            View
-                                        </button></td>
-                                </tr>
-                                <tr class="">
-                                    <td class="ID">
-                                        <input name="check" class="chk-box" id="" value="" type="checkbox">
-                                    </td>
-                                    <td>Ahmed</i></td>
-                                    <td>Ahmed@yahoo.com</td>
-                                    <td><small>17/02/2016</small></td>
-                                    <td><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus</p></td>
-                                    <td><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-message"> 
-                                            <i class="fa fa-eye"></i>
-                                            View
-                                        </button></td>
-                                </tr>
-                                <tr class="">
-                                    <td class="ID">
-                                        <input name="check" class="chk-box" id="" value="" type="checkbox">
-                                    </td>
-                                    <td>Ahmed</i></td>
-                                    <td>Ahmed@yahoo.com</td>
-                                    <td><small>17/02/2016</small></td>
-                                    <td><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus</p></td>
-                                    <td><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-message"> 
-                                            <i class="fa fa-eye"></i>
-                                            View
-                                        </button></td>
-                                </tr>
-                                <tr class="">
-                                    <td class="ID">
-                                        <input name="check" class="chk-box" id="" value="" type="checkbox">
-                                    </td>
-                                    <td>Ahmed</i></td>
-                                    <td>Ahmed@yahoo.com</td>
-                                    <td><small>17/02/2016</small></td>
-                                    <td><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus</p></td>
-                                    <td><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-message"> 
-                                            <i class="fa fa-eye"></i>
-                                            View
-                                        </button></td>
-                                </tr>
-                                <tr class="">
-                                    <td class="ID">
-                                        <input name="check" class="chk-box" id="" value="" type="checkbox">
-                                    </td>
-                                    <td>Ahmed</i></td>
-                                    <td>Ahmed@yahoo.com</td>
-                                    <td><small>17/02/2016</small></td>
-                                    <td><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus</p></td>
-                                    <td><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-message"> 
-                                            <i class="fa fa-eye"></i>
-                                            View
-                                        </button></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <form id="messages-form" action="#"> 
+                            <table class="table table-hover table-orders">
+                                <thead>
+                                    <tr>
+                                        <th id="ID">
+                                            <input id="CheckAll" type="checkbox">
+                                        </th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Date</th>
+                                        <th>Subject</th>
+                                        <th>Body</th>
+                                        <th>Operations</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="msg-table-body">
+                                    {% for msg in msgs %}
+                                    {% if msg.seen %}
+                                    <tr class="seen">
+                                        {% else %}
+                                    <tr class="un-seen">
+                                        {% endif %}
+                                        <td class="ID">
+                                            <input name="ids[]" class="chk-box" value="{{ msg.id }}" type="checkbox">
+                                        </td>
+                                        <td>{{ msg.name }}</td>
+                                        <td>{{ msg.from }}</td>
+                                        <td><small>{{ readable_time(msg.created_at) }}</small></td>
+                                        <td>{{ msg.subject }}</td>
+                                        <td><p>{{ msg.body }}</p></td>
+                                        <td>
+                                            <button type="button" class="btn btn-info btn-sm btn-msg-view" data-toggle="modal" data-msg-id="{{ msg.id }}" data-target="#modal-message"> 
+                                                <i class="fa fa-eye"></i>
+                                                View
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {{ token_input() |raw}}
+                        </form>
                     </div>
                 </div>
             </div>
@@ -236,27 +151,27 @@
                             <div class="row">
                                 <div class="form-group col-sm-6">
                                     <label>From</label>
-                                    <input id="" type="email" class="form-control" placeholder="Enter Email Address" required>
+                                    <input  type="email" class="form-control" placeholder="Enter Email Address" required>
                                 </div>
                                 <div class="form-group col-sm-6">
                                     <label>To </label>
-                                    <input id="" type="email" class="form-control" placeholder="Enter Email Address" required>
+                                    <input  type="email" class="form-control" placeholder="Enter Email Address" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="form-group col-sm-6">
                                     <label>subject</label>
-                                    <input id="" type="text" class="form-control" placeholder="Subject ere" >
+                                    <input  type="text" class="form-control" placeholder="Subject ere" >
                                 </div>
                                 <div class="form-group col-sm-6">
                                     <label>Uploade Attachment</label>
-                                    <input id="" type="file" >
+                                    <input  type="file" >
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="form-group col-sm-12">
                                     <label>Message</label>
-                                    <textarea id="" maxlength="350" class="form-control col-sm-12" placeholder="Text Message Here"></textarea>
+                                    <textarea  maxlength="350" class="form-control col-sm-12" placeholder="Text Message Here"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -276,33 +191,13 @@
 <!--View Message Modal -->
 <div class="modal fade " id="modal-message" tabindex="-1" role="dialog" aria-labelledby="mm">
     <div class="modal-dialog" role="document">
-        <form>
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="gridSystemModalLabel">View Message</h4>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="form-group col-sm-12">
-                            <div class="row">
-                                <div class="form-group col-sm-6">
-                                    <label>Name</label>
-                                    <input id="" type="text" class="form-control" placeholder="User name" required>
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label>Email </label>
-                                    <input id="" type="email" class="form-control" placeholder="Email Address" required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-12">
-                                    <label>Message</label>
-                                    <textarea id="" maxlength="350" class="form-control col-sm-12" placeholder="Text Message Here"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="modal-body" id="msg-modal-body">
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-defult" data-dismiss="modal">Cancel</button>
@@ -311,7 +206,11 @@
                     </button>
                 </div>
             </div><!-- /.modal-content -->
-        </form>
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+{% endblock %}
+{% block scripts %}
+<script id="msg-modal-template" >{% include 'admin/templates/msg-modal-template.html' %}</script>
+<script id="msg-row-template" >{% include 'admin/templates/msg-row-template.html' %}</script>
+<script src="{{ url_pub('admin/js/process.js') }}"></script>
 {% endblock %}

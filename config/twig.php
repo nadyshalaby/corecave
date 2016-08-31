@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Authentication;
 use App\Classes\Facebook;
 use App\Models\GoogleModel;
 use Carbon\Carbon;
@@ -8,10 +9,13 @@ return [
     'config' => [
         'cache' => path('storage.cache'),
         'debug' => true, //used for development purposes 
-    // 'auto_reload' => true, // if it didn't set it will be determined from the value of debug option
+// 'auto_reload' => true, // if it didn't set it will be determined from the value of debug option
     ],
     'globals' => [
         'errors' => validate(), // or callable
+        'auth' => function () {
+            return new Authentication;
+        }, 
     ],
     /**
      *  list the names of the classes that its functions will be statically called in Twig Environments 
@@ -43,8 +47,19 @@ return [
             $t = new Carbon($time);
             return $t->toRfc850String();
         },
-        'readable_time' => function ($time) {
+        'readable_time' => function ($time, $lang = 'en') {
+            if ($lang === 'en') {
+                $t = new Carbon($time);
+                return $t->diffForHumans();
+            }
             return arabic_date_format(strtotime($time));
+        },
+        'getErrors' => function () {
+            $msgs = '';
+            foreach (validate()->getAllErrorMsgs() as $value) {
+                $msgs .= $value . '\n';
+            }
+            return $msgs;
         },
     ],
     'filters' => [

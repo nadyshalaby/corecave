@@ -23,6 +23,12 @@ abstract class Url {
     public static function css($file) {
         return self::app() . "public/css/$file.css";
     }
+    
+    public static function translate($url) {
+        $chunks = multiexplode(['.', '/', '>', '|'], $url);
+        $url = implode('/', $chunks);
+        return self::app() . "$url";
+    }
 
     public static function img($file) {
         return self::app() . "public/images/$file";
@@ -56,6 +62,10 @@ abstract class Url {
 
     public static function route($name, $params = []) {
         return self::app() . trim(Router::getUrl($name, $params), '/');
+    }
+    
+    public static function action($controller, $params = []) {
+        return self::app() . trim(Router::getAction($controller, $params), '/');
     }
 
 }

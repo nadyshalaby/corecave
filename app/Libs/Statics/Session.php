@@ -17,7 +17,7 @@ abstract class Session {
         return $_SESSION[$key] = $value;
     }
 
-    public static function pull($key) {
+    public static function pull($name) {
         if (self::has($name)) {
             $res = $_SESSION[$name];
             self::delete($name);
@@ -34,7 +34,7 @@ abstract class Session {
     }
 
     public static function has($name) {
-        return isset($_SESSION[$name]);
+        return isset($_SESSION[$name]) && !empty($_SESSION[$name]);
     }
 
     public static function delete($name) {
@@ -59,30 +59,4 @@ abstract class Session {
     public static function flush() {
         session_destroy();
     }
-
-    public static function isExpired($ttl = 30) {
-        $last = isset($_SESSION['_last_activity']) ? $_SESSION['_last_activity'] : false;
-        if ($last !== false && time() - $last > $ttl * 60) {
-            return true;
-        }
-        $_SESSION['_last_activity'] = time();
-        return false;
-    }
-
-    public static function isFingerprint() {
-        $hash = md5(
-                $_SERVER['HTTP_USER_AGENT'] .
-                (ip2long($_SERVER['REMOTE_ADDR']) & ip2long('255.255.0.0'))
-        );
-        if (isset($_SESSION['_fingerprint'])) {
-            return $_SESSION['_fingerprint'] === $hash;
-        }
-        $_SESSION['_fingerprint'] = $hash;
-        return true;
-    }
-
-    public static function isValid() {
-        return static::isExpired() && static::isFingerprint();
-    }
-
 }

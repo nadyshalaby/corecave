@@ -21,7 +21,7 @@ $(document).ready(function () {
         $('#modal-orders').show();
     });
     
-   $('ul.nav li > a[href="'+window.location+'"]').closest('li').addClass('active');
+   $('ul.side > li > a[href="'+window.location+'"]').closest('li').addClass('active');
 
     /************Operation Edit************/
      /***********Ship Type*********/

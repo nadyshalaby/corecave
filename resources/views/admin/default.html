@@ -1,45 +1,23 @@
 <!DOCTYPE html>
-{% set data = session_flash('data') %}
 
 <html lang="en">
     <head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf" content="{{ token_csrf() }}">
         <title>Our First Hand</title>
         <link rel='stylesheet' href="{{ url_pub('admin/css/bootstrap.min.css') }}" />
         <link rel='stylesheet' href="{{ url_pub('admin/css/style.css') }}"/>
         <link rel='stylesheet' href="{{ url_pub('admin/css/font-awesome.min.css') }}"/>
         <link rel='stylesheet' href="{{ url_pub('admin/css/media.css') }}"/>
         <link rel='stylesheet' href="{{ url_pub('admin/css/animate.min.css') }}"/>
+        <link rel='stylesheet' href="{{ url_pub('admin/css/animate.min.css') }}"/>
+        <link rel='stylesheet' href="{{ url_pub('site/css/sweetalert.css') }}"/>
         <link rel='stylesheet' href="http://fonts.googleapis.com/css?family=Roboto:400,700,300"/>
         {% block styles %}{% endblock %}
     </head>
 
     <body>
-        {% if session_has('success') %}
-        <div class="alert alert-success center-block text-center">
-            {{ session_flash('success') }}
-            <span class="close" data-dismiss='alert'>&times;</span>
-        </div>
-        {% endif %}
-        {% if session_has('error') %}
-        <div class="alert alert-danger center-block text-center">
-            {{ session_flash('error') }}
-            <span class="close" data-dismiss='alert'>&times;</span>
-        </div>
-        {% endif %}
-        {% if session_has('waring') %}
-        <div class="alert alert-waring center-block text-center">
-            {{ session_flash('waring') }}
-            <span class="close" data-dismiss='alert'>&times;</span>
-        </div>
-        {% endif %}
-        {% if session_has('info') %}
-        <div class="alert alert-info center-block text-center">
-            {{ session_flash('info') }}
-            <span class="close" data-dismiss='alert'>&times;</span>
-        </div>
-        {% endif %}
         {% block body %}{% endblock %}
         <footer class="footer">
             <div class="container-fluid">
@@ -65,11 +43,29 @@
     </div>
 </div>
 {% block modals %}{% endblock %}
-
+<form id="csrf">{{ token_input() |raw}}</form>
 <script src="{{ url_pub('admin/js/jquery-1.12.1.min.js') }}"></script>
 <script src="{{ url_pub('admin/js/bootstrap.min.js') }}"></script>
 <script src="{{ url_pub('admin/js/plugins.js') }}"></script>
 <script src="{{ url_pub('admin/js/jquery.nicescroll.js') }}"></script>
+<script src="{{ url_pub('site/js/sweetalert.min.js') }}"></script>
+<script>
+{% if errors.hasError() %}
+swal({title: "Error!", text: '{{ getErrors() }}', type: "error", confirmButtonText: "close"});
+{% endif %}
+{% if session_has('success') %}
+swal("Good job!", "{{ session_pull('success') }}", "success")
+{% endif %}
+{% if session_has('error') %}
+swal("Error!", "{{ session_pull('error') }}", "error")
+{% endif %}
+{% if session_has('warning') %}
+swal("Sorry!", "{{ session_pull('warning') }}", "warning")
+{% endif %}
+{% if session_has('info') %}
+swal("Information!", "{{ session_pull('info') }}", "info")
+{% endif %}
+</script>
 
 {% block scripts %}{% endblock %}
 </body>

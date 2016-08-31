@@ -1,9 +1,5 @@
 <?php
 
-use App\Libs\Concretes\Request;
-use App\Libs\Concretes\Response;
-use App\Models\User;
-
 /**
  * For Routing you can use: 
  * -----------------------
@@ -16,15 +12,7 @@ use App\Models\User;
  * - Router::get(...);
  * - R::get(...);
  */
-R::ajax('/users', [
-    'controller' => function (Request $r, Response $res) {
-        $user = User::where('email', $r->getParam('email'))->first()->toArray();
-        return $res->withJson($user);
-    },
-    'token' => false,
-]);
-
-R::map('/', ['controller' => 'Site\SiteController', 'name' => 'site', 'middleware' => 'LocaleMiddleware'], [
+R::map('/', ['controller' => 'Site\\SiteController', 'name' => 'site', 'middleware' => 'LocaleMiddleware'], [
     'arabic' => [
         'path' => 'ar',
         'name' => 'arabic',
@@ -33,19 +21,90 @@ R::map('/', ['controller' => 'Site\SiteController', 'name' => 'site', 'middlewar
         'name' => 'english',
     ],
 ]);
+
+R::map('/', 'Site\\SiteController', [
+    'contact' => [
+        'method' => 'post',
+        'path' => 'contact',
+        'middleware' => 'ContactMiddleware',
+        'name' => 'contact',
+    ],
+    'order' => [
+        'method' => 'post',
+        'path' => 'order',
+        'middleware' => 'OrderMiddleware',
+    ]
+]);
+
 R::get('/admin', [
-    'controller' => 'Admin\HomeController@index',
+    'controller' => 'Admin\\HomeController@index',
+    'middleware' => 'AuthMiddleware',
     'name' => 'home',
 ]);
-
-R::get('/messages', [
-    'controller' => 'Admin\MessageController@index',
-    'name' => 'messages',
+R::get('/download/:file', [
+    'controller' => 'Admin\\HomeController@download',
+    'middleware' => 'AuthMiddleware',
 ]);
 
-R::get('/orders', [
-    'controller' => 'Admin\OrderController@index',
-    'name' => 'orders',
+R::map('orders/', 'Admin\\OrderController', [
+    'index' => [
+        'middleware' => 'AuthMiddleware',
+        'name' => 'orders',
+    ],
+    'view' => [
+        'path' => 'view/:id',
+        'method' => 'ajax|post',
+    ],
+    'filter' => [
+        'path' => 'filter/:filter',
+        'method' => 'ajax|post',
+    ],
+    'action' => [
+        'path' => 'action/:action',
+        'method' => 'ajax|post',
+    ],
+    'search' => [
+        'path' => 'search',
+        'method' => 'ajax|post',
+    ],
+]);
+R::map('messages/', 'Admin\\MessageController', [
+    'index' => [
+        'middleware' => 'AuthMiddleware',
+        'name' => 'messages',
+    ],
+    'view' => [
+        'path' => 'view/:id',
+        'method' => 'ajax|post',
+    ],
+    'filter' => [
+        'path' => 'filter/:filter',
+        'method' => 'ajax|post',
+    ],
+    'action' => [
+        'path' => 'action/:action',
+        'method' => 'ajax|post',
+    ],
+    'search' => [
+        'path' => 'search',
+        'method' => 'ajax|post',
+    ],
+]);
+R::map('profile/', 'Admin\\ProfileController', [
+    'index' => [
+        'middleware' => 'AuthMiddleware',
+        'name' => 'profile',
+    ],
+    'logout' => [
+        'path' => 'signout',
+        'name' => 'logout',
+    ],
+    'update' => [
+        'path' => 'update',
+        'middleware' => 'AccountUpdateMiddleware',
+        'method' => 'put',
+        'name' => 'update',
+    ]
 ]);
 
 R::map('/signin', [

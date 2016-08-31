@@ -5,3 +5,4 @@ nbproject/
 composer.lock
 /storage/cache/
 /storage/sessions/
+/storage/uploads/

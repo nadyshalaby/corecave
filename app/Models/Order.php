@@ -5,5 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model {
-    //put your code here
+   public function getTableColumns() {
+        return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
+    }
 }

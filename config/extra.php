@@ -7,6 +7,11 @@ return [
     ],
     'session' => [
         'user_data' => 'user',
+        'timeout' => 0, // 'timeout' => 30 // computed as 30 secs
+    ],
+    'uploads' => [
+        'compressed' => path('storage.uploads.compressed'),
+        'images' => path('storage.uploads.images'),
     ],
     'social' => [
         'facebook' => [

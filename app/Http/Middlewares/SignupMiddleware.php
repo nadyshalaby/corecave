@@ -11,7 +11,6 @@ namespace App\Http\Middlewares;
 use Request;
 use App\Libs\Statics\Session;
 use Validation;
-use function goBack;
 
 class SignupMiddleware extends \App\Libs\Concretes\Middleware{
     

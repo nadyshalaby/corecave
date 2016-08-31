@@ -15,7 +15,6 @@ use App\Libs\Statics\Config;
 use App\Libs\Statics\Cookie;
 use App\Libs\Statics\Hash;
 use App\Libs\Statics\Session;
-use App\Models\Role;
 use App\Models\User;
 
 class Authentication {
@@ -37,6 +36,15 @@ class Authentication {
             if ($remember) {
                 Cookie::put($this->_rememberCookie, $user->hash, Config::extra('cookie.remember_me_expiry'));
             }
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function valid($email, $password) {
+        // check if the user exists
+        $user = User::where('email', $email)->first();
+        if ($user && Hash::match($password, $user->password)) {
             return TRUE;
         }
         return FALSE;
@@ -81,26 +89,48 @@ class Authentication {
 
     public function syncUser() {
         if ($this->alive()) {
-            return Session::put($this->_userSession, User::where('hash', $this->getUser()->hash)->first());
+            $user = Session::pull($this->_userSession);
+            Session::put($this->_userSession, User::where('hash', $user->hash)->first());
+            return true;
+        }else{
+            return false;
         }
     }
 
     public function createUser(array $data) {
         $user = new User;
+        foreach ($data as $key => $value) {
+            $user->{$key} = $value;
+        }
+        if ($user->save()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-        $user->firstname = array_fetch($data, 'firstname');
-        $user->lastname = array_fetch($data, 'lastname');
-        $user->email = array_fetch($data, 'email');
-        $user->active = array_fetch($data, 'active', 0);
-        $user->hash = Hash::unique(30);
-        $user->password = Hash::make(array_fetch($data, 'password'));
-        $user->role = Role::where('role', array_fetch($data, 'role', 'viewer'))->first()->id;
-
-        $user->saveOrFail();
+    public function updateUser(array $data) {
+        if ($this->alive()) {
+            $user = User::find($this->getUser()->id);
+            foreach ($data as $key => $value) {
+                $user->{"$key"} = $value;
+            }
+            if ($user->save()) {
+                $this->syncUser();
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     public function getUser() {
-        return Session::get($this->_userSession);
+        if ($this->alive()) {
+            return Session::get($this->_userSession);
+        }
+        return null;
     }
 
 }

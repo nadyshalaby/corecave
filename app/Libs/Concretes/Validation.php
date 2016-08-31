@@ -11,7 +11,7 @@
 
 namespace App\Libs\Concretes;
 
-use function escape;
+use App\Libs\Statics\Session;
 
 class Validation {
 
@@ -187,6 +187,7 @@ class Validation {
      *                                                  'field' => 'nr_password', // st_password,nr_password,username,url,color,ip,tag,email,phone;
      * 		                               		'min' => 2,
      * 		                               		'max' => 20,
+     * 		                               		'range' => ['min' => 20, 'max' => 100],
      * 		                               		'unique' => 'users',
      * 		                               		'alpha' =>true,
      * 		                               		'alpha_space' =>true,
@@ -215,8 +216,8 @@ class Validation {
     public function check(array $data, array $param_rules = [], array $error_msgs = []) {
         $this->_msgs = $error_msgs;
         if (count($param_rules)) {
-            unset($_SESSION['errors']);
-
+            // clear previous errors
+            $this->clearErrors();
             foreach ($param_rules as $param => $rules) {
                 $param = escape(trim($param));
                 $param_value = null;
@@ -261,14 +262,14 @@ class Validation {
                         case 'range':
                             if (count($rule_value) && !empty($param_value)) {
                                 $res = '';
-                                if (!empty($rule_value['low'])) {
-                                    if (!($param_value >= $rule_value['low'])) {
-                                        $res .= "greater than or equal {$rule_value['low']} ";
+                                if (!empty($rule_value['min'])) {
+                                    if (!($param_value >= $rule_value['min'])) {
+                                        $res .= "greater than or equal {$rule_value['min']} ";
                                     }
                                 }
-                                if (!empty($rule_value['high'])) {
-                                    if (!($param_value <= $rule_value['high'])) {
-                                        $res .= "lower than or equal {$rule_value['high']} ";
+                                if (!empty($rule_value['max'])) {
+                                    if (!($param_value <= $rule_value['max'])) {
+                                        $res .= "lower than or equal {$rule_value['max']} ";
                                     }
                                 }
 
@@ -358,47 +359,47 @@ class Validation {
                                 switch ($rule_value) {
                                     case 'st_password':
                                         if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(_|[^\w])).+$/', $param_value)) {
-                                            $this->addError($param, $rule, "The password must contains at least one capital letter, one small letter, one digit, and one special character!");
+                                            $this->addError($param, $rule, "{$title} must contains at least one capital letter, one small letter, one digit, and one special character!");
                                         }
                                         break;
                                     case 'nr_password':
                                         if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', $param_value)) {
-                                            $this->addError($param, $rule, "The password must contains at least one capital letter, one small letter, one digit!");
+                                            $this->addError($param, $rule, "{$title} must contains at least one capital letter, one small letter, one digit!");
                                         }
                                         break;
                                     case 'username':
                                         if (!preg_match('/^[a-zA-Z0-9_-]{3,20}$/', $param_value)) {
-                                            $this->addError($param, $rule, "The username may contains alphanumeric, dashes and underscores only , min = 3 and max = 20!");
+                                            $this->addError($param, $rule, "{$title} may contains alphanumeric, dashes and underscores only , min = 3 and max = 20!");
                                         }
                                         break;
                                     case 'url':
-                                        if (!preg_match('/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/', $param_value)) {
-                                            $this->addError($param, $rule, "The url is invalid!");
+                                        if (filter_var($param_value, FILTER_VALIDATE_URL) === false) {
+                                            $this->addError($param, $rule, "{$title} is invalid url!");
                                         }
                                         break;
                                     case 'color':
                                         if (!preg_match('/^#?([a-f0-9]{6}|[a-f0-9]{3})$/', $param_value)) {
-                                            $this->addError($param, $rule, "The color is invalid!");
+                                            $this->addError($param, $rule, "{$title} is invalid color!");
                                         }
                                         break;
                                     case 'ip':
                                         if (!preg_match('/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/', $param_value)) {
-                                            $this->addError($param, $rule, "The ip is invalid!");
+                                            $this->addError($param, $rule, "{$title} is invalid ip!");
                                         }
                                         break;
                                     case 'tag':
                                         if (!preg_match('/^<([a-z]+)([^<]+)*(?:>(.*)<\/\1>|\s+\/>)$/', $param_value)) {
-                                            $this->addError($param, $rule, "The tag is invalid!");
+                                            $this->addError($param, $rule, "{$title} is invalid tag!");
                                         }
                                         break;
                                     case 'email':
-                                        if (!preg_match('/([\w-\.]+)@((?:[\w]+\.)+)([a-zA-Z]{2,4})/', $param_value)) {
-                                            $this->addError($param, $rule, "The {$title} must be a valid one!");
+                                        if (filter_var($param_value, FILTER_VALIDATE_EMAIL) === false) {
+                                            $this->addError($param, $rule, "{$title} must be a valid one!");
                                         }
                                         break;
                                     case 'phone':
                                         if (!preg_match('%^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$%i', $param_value) || strlen($param_value) < 10) {
-                                            $this->addError($param, $rule, "The {$title} must be a valid one!");
+                                            $this->addError($param, $rule, "{$title} must be a valid one!");
                                         }
                                         break;
                                 }
@@ -409,61 +410,66 @@ class Validation {
             }
         }
 
+        Session::put('_validation_data', $data);
         return $this;
     }
 
     public function passed() {
-        if (empty($_SESSION['errors'])) {
+        if (empty($_SESSION['_validation_errors'])) {
             return true;
         }
         return false;
     }
 
-    public function pullError($field, $rule = null){
-        if($this->hasError($field,$rule)){
-            $error = $this->getError($field,$rule);
+    public function pullError($field, $rule = null) {
+        if ($this->hasError($field, $rule)) {
+            $error = $this->getError($field, $rule);
             $this->forgetError($field, $rule);
             return $error;
         }
-        
-        if($this->hasError($field)){
+
+        if ($this->hasError($field)) {
             $error = $this->getError($field);
             $this->forgetError($field);
             return $error;
         }
-        
+
         return null;
     }
-    
-    public function clearErrors(){
-        unset($_SESSION['errors']);
+
+    public function clearErrors() {
+        unset($_SESSION['_validation_errors']);
+        unset($_SESSION['_validation_data']);
     }
 
     public function addError($field, $rule, $error) {
-        $_SESSION['errors'][$field][$rule] = (isset($this->_msgs[$field][$rule])) ? $this->_msgs[$field][$rule] : $error;
+        $_SESSION['_validation_errors'][$field][$rule] = (isset($this->_msgs[$field][$rule])) ? $this->_msgs[$field][$rule] : $error;
         return $this;
     }
 
-    public function hasError($field, $rule = null) {
-        if (empty($_SESSION['errors'])) {
+    public function hasError($field = '', $rule = null) {
+        if(empty($field)){
+            return !$this->passed();
+        }
+        if (empty($_SESSION['_validation_errors'])) {
             return false;
         }
-        if (!isset($_SESSION['errors'][$field])) {
+        if (!isset($_SESSION['_validation_errors'][$field])) {
             return false;
         }
         if (!empty($rule)) {
-            return isset($_SESSION['errors'][$field][$rule]);
+            return isset($_SESSION['_validation_errors'][$field][$rule]);
         }
         return true;
     }
 
     public function forgetError($field, $rule = null) {
         if ($this->hasError($field, $rule)) {
-            unset($_SESSION['errors'][$field][$rule]);
+            unset($_SESSION['_validation_errors'][$field][$rule]);
             return true;
         }
         if ($this->hasError($field)) {
-            unset($_SESSION['errors'][$field]);
+            unset($_SESSION['_validation_errors'][$field]);
             return true;
         }
         return false;
@@ -473,7 +479,7 @@ class Validation {
         foreach ($error_msgs as $field => $rules) {
             foreach ($rules as $rule => $msg) {
                 if ($this->hasError($field, $rule)) {
-                    $_SESSION['errors'][$field][$rule] = $msg;
+                    $_SESSION['_validation_errors'][$field][$rule] = $msg;
                 }
             }
         }
@@ -485,14 +491,37 @@ class Validation {
             return null;
         }
         if (!empty($rule)) {
-            return $this->hasError($param, $rule) ? $_SESSION['errors'][$param][$rule] : null;
+            return $this->hasError($param, $rule) ? $_SESSION['_validation_errors'][$param][$rule] : null;
         }
-        return $_SESSION['errors'][$param];
+        return $_SESSION['_validation_errors'][$param];
     }
 
-    public function getErrorMsgs() {
+    public function getParam($param) {
+        if (empty($_SESSION['_validation_data'])) {
+            return null;
+        }
+        if (empty($_SESSION['_validation_data'][$param])) {
+            return null;
+        }
+
+        return $_SESSION['_validation_data'][$param];
+    }
+
+    public function pullParam($param) {
+        if (empty($_SESSION['_validation_data'])) {
+            return null;
+        }
+        if (empty($_SESSION['_validation_data'][$param])) {
+            return null;
+        }
+        $res = $_SESSION['_validation_data'][$param];
+        unset($_SESSION['_validation_data'][$param]);
+        return $res;
+    }
+
+    public function getAllErrorMsgs() {
         $msgs = [];
-        foreach ($_SESSION['errors'] as $param => $msg_arr) {
+        foreach ($_SESSION['_validation_errors'] as $param => $msg_arr) {
             foreach ($msg_arr as $msg) {
                 $msgs [] = $msg;
             }
@@ -500,8 +529,8 @@ class Validation {
         return $msgs;
     }
 
-    public function getErrors() {
-        return isset($_SESSION['errors']) ? $_SESSION['errors'] : null;
+    public function getAllErrors() {
+        return isset($_SESSION['_validation_errors']) ? $_SESSION['_validation_errors'] : null;
     }
 
     public function getInstance() {

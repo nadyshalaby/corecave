@@ -21,7 +21,7 @@ abstract class Cookie {
         }
     }
 
-    public static function pull($key) {
+    public static function pull($name) {
         if (self::has($name)) {
             $res = $_COOKIE[$name];
             self::delete($name);
@@ -35,7 +35,7 @@ abstract class Cookie {
     }
 
     public static function has($name) {
-        return isset($_COOKIE[$name]);
+        return isset($_COOKIE[$name]) && !empty($_COOKIE[$name]);
     }
 
     public static function all($as_arr = false) {

@@ -3,7 +3,7 @@
 /**
  * This file is part of kodekit framework
  * 
- * @copyright (c) 2015-2016, nady shalaby
+ * copyright (c) 2015-2016, nady shalaby
  * 
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,7 +13,6 @@ namespace App\Libs\Concretes;
 
 use App\Libs\Statics\Cookie;
 use App\Libs\Statics\Session;
-use App\Libs\Statics\Url;
 use Locale;
 
 class Request {
@@ -55,7 +54,7 @@ class Request {
     }
 
     public function hasParam($name) {
-        return (isset($_REQUEST[$name]));
+        return (isset($_REQUEST[$name])) && !empty($_REQUEST[$name]);
     }
 
     public function getParamNames() {
@@ -77,8 +76,7 @@ class Request {
 
     public function appendParam($name, $value = null) {
         if (is_array($name)) {
-            foreach ($array as $key => $val) {
-
+            foreach ($name as $key => $val) {
                 $_REQUEST[$key] = $val;
             }
         }
@@ -86,9 +84,9 @@ class Request {
         return $this;
     }
 
-    public function getFile($name, $as_arr = false) {
+    public function getFile($name) {
         if ($this->hasFile($name)) {
-            return (!$as_arr) ? arr2obg($_FILES[$name]) : $_FILES[$name];
+            return new Upload($_FILES[$name]);
         }
         return null;
     }
@@ -98,9 +96,16 @@ class Request {
         return $this;
     }
 
-    public function getFiles($as_arr = false) {
-        if ($_FILES) {
-            return (!$as_arr) ? arr2obg($_FILES) : $_FILES;
+    public function getFiles($name) {
+        if(isset($_FILES[$name]) && is_array($_FILES[$name]['name'])) {
+            $files = $this->reArrayFiles($_FILES[$name]);
+            $objs = [];
+            foreach ($files as $file) {
+                if ($file['error'] === 0) {
+                    $objs[] = new Upload($file);
+                }
+            }
+            return $objs;
         }
         return null;
     }
@@ -115,11 +120,11 @@ class Request {
     }
 
     public function hasFile($name) {
-        return (isset($_FILES[$name]) && $_FILES[$name]['error'] == 0);
+        return isset($_FILES[$name]) && $_FILES[$name]['error'] === 0;
     }
 
     public function getPageUrl() {
-        return $_SERVER['REQUEST_URI'];
+        return $this->SERVER('REQUEST_URI');
     }
 
     public function __get($name) {
@@ -139,23 +144,23 @@ class Request {
     }
 
     public function getFullUrl($use_forwarded_host = false) {
-        return $this->getBaseUrl($_SERVER, $use_forwarded_host) . $_SERVER['REQUEST_URI'];
+        return $this->getBaseUrl($use_forwarded_host) . $this->SERVER('REQUEST_URI');
     }
 
     public function getBaseUrl($use_forwarded_host = false) {
-        $ssl = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' );
-        $sp = strtolower($_SERVER['SERVER_PROTOCOL']);
+        $ssl = (!empty($this->SERVER('HTTPS')) && $this->SERVER('HTTPS') == 'on' );
+        $sp = strtolower($this->SERVER('SERVER_PROTOCOL'));
         $protocol = substr($sp, 0, strpos($sp, '/')) . ( ( $ssl ) ? 's' : '' );
-        $port = $_SERVER['SERVER_PORT'];
+        $port = $this->SERVER('SERVER_PORT');
         $port = ( (!$ssl && $port == '80' ) || ( $ssl && $port == '443' ) ) ? '' : ':' . $port;
-        $host = ( $use_forwarded_host && isset($_SERVER['HTTP_X_FORWARDED_HOST']) ) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : ( isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : null );
-        $host = isset($host) ? $host : $_SERVER['SERVER_NAME'] . $port;
+        $host = ( $use_forwarded_host && !empty($this->SERVER('HTTP_X_FORWARDED_HOST')) ) ? $this->SERVER('HTTP_X_FORWARDED_HOST') : (!empty($this->SERVER('HTTP_HOST')) ? $this->SERVER('HTTP_HOST') : null );
+        $host = isset($host) ? $host : $this->SERVER('SERVER_NAME') . $port;
         return $protocol . '://' . $host;
     }
 
     /**
      * Returns the name of the host getServer (such as www.w3schools.com)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getServerName() {
         return $this->SERVER('SERVER_NAME');
@@ -163,7 +168,7 @@ class Request {
 
     /**
      * Returns the IP address of the host getServer
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getServerIp() {
         return $this->SERVER('SERVER_ADDR');
@@ -175,7 +180,7 @@ class Request {
 
     /**
      * Returns the getServer identification string (such as Apache/2.2.24)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getServerSoftware() {
         return $this->SERVER('SERVER_SOFTWARE');
@@ -187,7 +192,7 @@ class Request {
 
     /**
      * Returns the name and revision of the information protocol (such as HTTP/1.1)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getServerProtocol() {
         return $this->SERVER('SERVER_PROTOCOL');
@@ -195,7 +200,7 @@ class Request {
 
     /**
      * Returns the filename of the currently executing script
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function fileName() {
         return $this->SERVER('PHP_SELF');
@@ -207,7 +212,7 @@ class Request {
 
     /**
      * Returns the timestamp of the start of the getRequest (such as 1377687496)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getRequestTimestamp() {
         return $this->SERVER('REQUEST_TIME');
@@ -219,7 +224,7 @@ class Request {
 
     /**
      * Returns the query string if the page is accessed via a query string
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getRequestQueryString() {
         return $this->SERVER('QUERY_STRING');
@@ -227,7 +232,7 @@ class Request {
 
     /**
      * Returns the Accept_Charset header from the current getRequest (such as utf-8,ISO-8859-1)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getRequestCharset() {
         return $this->SERVER('HTTP_ACCEPT_CHARSET');
@@ -235,7 +240,7 @@ class Request {
 
     /**
      * Returns the complete URL of the current page (not reliable because not all getClient-agents
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getPrevUrl() {
         return ($this->SERVER('HTTP_REFERER')) ? $this->SERVER('HTTP_REFERER') : null;
@@ -272,15 +277,15 @@ class Request {
     public function getClientInfo($ip = NULL, $deep_detect = TRUE) {
         $output = NULL;
         if (filter_var($ip, FILTER_VALIDATE_IP) === FALSE) {
-            $ip = $_SERVER["REMOTE_ADDR"];
+            $ip = $this->SERVER("REMOTE_ADDR");
             if ($deep_detect) {
-                if (filter_var(@$_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP))
-                    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-                if (filter_var(@$_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP))
-                    $ip = $_SERVER['HTTP_CLIENT_IP'];
+                if (filter_var($this->SERVER('HTTP_X_FORWARDED_FOR'), FILTER_VALIDATE_IP))
+                    $ip = $this->SERVER('HTTP_X_FORWARDED_FOR');
+                if (filter_var($this->SERVER('HTTP_CLIENT_IP'), FILTER_VALIDATE_IP))
+                    $ip = $this->SERVER('HTTP_CLIENT_IP');
             }
         }
-        return @unserialize(file_get_contents('http://ip-api.com/php/' . $ip));
+        return unserialize(file_get_contents('http://ip-api.com/php/' . $ip));
     }
 
     public function getClientHost() {
@@ -293,7 +298,7 @@ class Request {
 
     /**
      * eg. (Chrome, firefox)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getClientBrowser() {
         return $this->browser('browser');
@@ -301,7 +306,7 @@ class Request {
 
     /**
      * eg. (Mozilla Foundation . Google Inc)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getClientBrowserMaker() {
         return $this->browser('browser_maker');
@@ -309,7 +314,7 @@ class Request {
 
     /**
      * eg. (32)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getClientBrowserBits() {
         return $this->browser('browser_bits');
@@ -317,7 +322,7 @@ class Request {
 
     /**
      * eg. (48.0, 43.0)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getClientBrowserVersion() {
         return $this->browser('version');
@@ -325,7 +330,7 @@ class Request {
 
     /**
      * eg. (Win8.1)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getClientOS() {
         return $this->browser('platform');
@@ -333,7 +338,7 @@ class Request {
 
     /**
      * eg. (64, 32)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getClientOSBits() {
         return $this->browser('platform_bits');
@@ -341,7 +346,7 @@ class Request {
 
     /**
      * eg. (Microsoft Corporation)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getClientOSMaker() {
         return $this->browser('platform_maker');
@@ -349,7 +354,7 @@ class Request {
 
     /**
      * eg. (Windows 8.1)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getClientOSDesc() {
         return $this->browser('platform_description');
@@ -357,17 +362,17 @@ class Request {
 
     /**
      * eg. (Windows Desktop)
-     * @return (type) (description)
+     * return (type) (description)
      */
     public function getClientDevice() {
         return $this->browser('device_name');
     }
 
     public function isSecure() {
-        if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+        if (!empty($this->SERVER('HTTPS')) && $this->SERVER('HTTPS') == 'on') {
             return true;
         }
-        if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+        if (!empty($this->SERVER('HTTP_X_FORWARDED_PROTO')) && $this->SERVER('HTTP_X_FORWARDED_PROTO') == 'https') {
             return true;
         }
 
@@ -375,13 +380,13 @@ class Request {
     }
 
     public function isAjax() {
-        return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' );
+        return (!empty($this->SERVER('HTTP_X_REQUESTED_WITH')) && strtolower($this->SERVER('HTTP_X_REQUESTED_WITH')) == 'xmlhttprequest' );
     }
 
     /**
      * Helper Method for retrieving browser info
-     * @param  (type) $key (description)
-     * @return (type)      (description)
+     * param  (type) $key (description)
+     * return (type)      (description)
      */
     private function browser($key) {
         return (get_browser(null, true)[$key]) ? : '';
@@ -389,11 +394,26 @@ class Request {
 
     /**
      * Helper Method for retrieving browser info
-     * @param  (type) $key (description)
-     * @return (type)      (description)
+     * param  (type) $key (description)
+     * return (type)      (description)
      */
     public function SERVER($key) {
         return (isset($_SERVER[$key])) ? $_SERVER[$key] : null;
+    }
+
+    private function reArrayFiles(&$file_post) {
+
+        $file_ary = array();
+        $file_count = count($file_post['name']);
+        $file_keys = array_keys($file_post);
+
+        for ($i = 0; $i < $file_count; $i++) {
+            foreach ($file_keys as $key) {
+                $file_ary[$i][$key] = $file_post[$key][$i];
+            }
+        }
+
+        return $file_ary;
     }
 
 }

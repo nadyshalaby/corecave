@@ -130,9 +130,9 @@ class Response {
         return $this;
     }
 
-    public function withJson() {
+    public function withJson(...$args) {
         $this->setContentType(self::TYPE_json);
-        return json_encode(func_get_args());
+        return json_encode(...$args);
     }
 
     public function withError($code, $default_message = '') {

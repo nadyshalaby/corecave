@@ -24,6 +24,7 @@ class Router {
     private $url = '';
     private $routes = [];
     private $namedRoutes = [];
+    private $actionRoutes = [];
     private $resolver;
     private static $route;
 
@@ -88,35 +89,35 @@ class Router {
         return $this->addRoute($path, $callableOrOptions, $name, 'OPTIONS', $with, $middleware, $token);
     }
 
-    public function map($prefix = '', $options = [], $routes = []) {
+    public function map($map_path = '', $options = [], $routes = []) {
         $argCount = func_num_args();
 
         switch ($argCount) {
             case 1:
-                $this->_map(null, null, $prefix);
+                $this->_map(null, null, $map_path);
                 break;
             case 2:
-                if (is_array($prefix)) {
-                    $this->_map(null, $prefix, $options);
+                if (is_array($map_path)) {
+                    $this->_map(null, $map_path, $options);
                 } else {
-                    if (class_exists($prefix)) {
-                        $this->_map(null, $prefix, $options);
-                    } else if (class_exists("App\\Http\\Controllers\\{$prefix}")) {
-                        $this->_map(null, "App\\Http\\Controllers\\{$prefix}", $options);
-                    } else if (class_exists("App\\Http\\Controllers\\{$prefix}Controller")) {
-                        $this->_map(null, "App\\Http\\Controllers\\{$prefix}Controller", $options);
+                    if (class_exists($map_path)) {
+                        $this->_map(null, $map_path, $options);
+                    } else if (class_exists("App\\Http\\Controllers\\{$map_path}")) {
+                        $this->_map(null, "App\\Http\\Controllers\\{$map_path}", $options);
+                    } else if (class_exists("App\\Http\\Controllers\\{$map_path}Controller")) {
+                        $this->_map(null, "App\\Http\\Controllers\\{$map_path}Controller", $options);
                     } else {
-                        $this->_map($prefix, null, $options);
+                        $this->_map($map_path, null, $options);
                     }
                 }
                 break;
             case 3:
-                $this->_map($prefix, $options, $routes);
+                $this->_map($map_path, $options, $routes);
                 break;
         }
     }
 
-    private function _map($prefix, $options, $routes) {
+    private function _map($map_path, $options, $routes) {
 
         $map_controller = is_string($options) ? $options : '';
         $map_middlewares = [];
@@ -131,12 +132,12 @@ class Router {
             $map_middlewares = array_fetch($options, 'middleware', $map_middlewares);
             $map_with = array_fetch($options, 'with', $map_with);
             $map_token = array_fetch($options, 'token', $map_token);
-            $prefix = array_fetch($options, 'prefix', $prefix);
+            $map_path = array_fetch($options, 'path', $map_path);
             $map_name = array_fetch($options, 'name', $map_name);
         }
 
         foreach ($routes as $func => $route) {
-            $path = $prefix;
+            $path = $map_path;
             $controller = $map_controller;
             $with = $map_with;
             $method = $map_methods;
@@ -159,7 +160,7 @@ class Router {
                     $controller = implode('', [$map_controller, $controller]) . "@" . str_replace("$name.", '', $func);
                 }
 
-                if (!empty($name)) {
+                if (!empty($name) && !empty($map_name)) {
                     $name = implode('.', [$map_name, $name]);
                 }
             }
@@ -290,6 +291,11 @@ class Router {
         if ($name) {
             $this->namedRoutes[$name] = $path;
         }
+        
+        if(is_string($callableOrOptions)){
+             $this->actionRoutes[$callableOrOptions] = $path;
+        }
+        
         if (is_array($with)) {
             foreach ($with as $param => $pattern) {
                 $route->with($param, $pattern);
@@ -300,6 +306,18 @@ class Router {
     public static function getUrl($name, $params = []) {
         if (isset(self::$route->namedRoutes[$name])) {
             $path = self::$route->namedRoutes[$name];
+            foreach ($params as $k => $v) {
+                $path = str_replace(":$k", $v, $path);
+            }
+            return $path;
+        }
+        return '';
+    }
+    
+    public static function getAction($controller, $params = []) {
+        //dd(self::$route->actionRoutes);
+        if (isset(self::$route->actionRoutes[$controller])) {
+            $path = self::$route->actionRoutes[$controller];
             foreach ($params as $k => $v) {
                 $path = str_replace(":$k", $v, $path);
             }
@@ -371,7 +389,7 @@ class Router {
                                 // print results
                                 print $res;
                             } else if (!is_null($res)) {
-                                Response::withJson($res);
+                                print Response::withJson($res);
                             }
                                 
                             exit;
@@ -383,7 +401,7 @@ class Router {
                 throw new BadRequestException('Unauthorized: Access is denied, REQUEST_METHOD not found');
             }
         } catch (Exception $exc) {
-            die($exc->getMessage() . ' please go <a href="' . Request::getPrevUrl() . '">back.</a>');
+            die(">>> Message: \"".$exc->getMessage()."\"<br /><br />>>> Line: {$exc->getLine()}" . "<br /><br />>>> File: \"{$exc->getFile()}\"" . " <br /><br />>>> Trace: <pre>{$exc->getTraceAsString()}</pre>");
         }
     }
 

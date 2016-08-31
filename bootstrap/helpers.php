@@ -1,6 +1,6 @@
 <?php
 
-use App\Libs\Statics\Container;
+use App\Libs\Statics\Url;
 
 function view($path, $args = []) {
     return View::show($path, $args);
@@ -21,10 +21,50 @@ function route($name, $args = []) {
     return Url::route($name, $args);
 }
 
+function action($name, $args = []) {
+    return Url::action($name, $args);
+}
+
 function flash($name, $content = null) {
     return Response::flash($name, $content);
 }
 
+/**
+ * Checks if the given array follows the specified rules on each field passed.eg
+ * <b>Example:</b>
+ * <pre>
+ * 	validate($array,[
+ * 	                              		'password' => [
+ *                                                      'required' => true,
+ *                                                      'field' => 'nr_password', // st_password,nr_password,username,url,color,ip,tag,email,phone;
+ * 		                               		'min' => 2,
+ * 		                               		'max' => 20,
+ * 		                               		'range' => ['min' => 20, 'max' => 100],
+ * 		                               		'unique' => 'users',
+ * 		                               		'alpha' =>true,
+ * 		                               		'alpha_space' =>true,
+ * 		                               		'unicode' =>true,
+ * 		                               		'unicode_space' =>true,
+ * 		                               		'unicode_num' =>true,
+ * 		                               		'num' =>true,
+ * 	 	                              		'alpha_num' => true,
+ * 	 	                              		'zip' => ['CA','EG','US'],
+ * 	 	                              		'zip' => 'CA',
+ * 		                               		'regexp' =>'/[0-9]+/',
+ * 	 	                              		'matches' => 'password_again',
+ * 	 	                              		'equals' => ['password1','password2','password3'],
+ * 		                               ],
+ * 		                     ]);
+ * 	if (validate()->passed()){
+ * 		echo 'Ok';
+ * 	}else{
+ * 		echo '<pre>',print_r(validate()->getErrors()),'</pre>';
+ * 	}
+ * </pre>
+ * @param array $data 
+ * @param array $param_rules 
+ * @return obj|boolean
+ */
 function validate(array $data = null, array $param_rules = [], array $error_msgs = []) {
     if ($data) {
         return Validation::check($data, $param_rules, $error_msgs);
@@ -89,7 +129,7 @@ function uniqueFile($path, $filename) {
     $fileext = end($fileparts);
     array_pop($fileparts);
     $fileorigin = implode('_', $fileparts);
-    while (file_exists(path("$path/$filename"))) {
+    while (file_exists("$path/$filename")) {
         $filename = "{$fileorigin}_" . rand(0, 99999) . ".$fileext";
     }
     return$filename;

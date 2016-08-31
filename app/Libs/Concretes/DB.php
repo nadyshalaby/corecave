@@ -15,8 +15,6 @@ use App\Libs\Statics\Config;
 use App\Libs\Statics\Container;
 use PDO;
 use PDOException;
-use function isKeyStringArray;
-use function path;
 
 /**
  * Database class that encapsulate the PDO methods
