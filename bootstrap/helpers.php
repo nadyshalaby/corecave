@@ -112,11 +112,17 @@ function array_fetch(array $array, $path_to_key, $default = null) {
     return $array;
 }
 
+/**
+ * deeping merge between any type of arguments into one array.
+ * 
+ * @param $...args $mixed args to be merged
+ * @return type
+ */
 function array_merge_mixed() {
     $array = [];
     foreach (func_get_args() as $arg) {
         if (is_array($arg)) {
-            $array = array_merge_recursive($array, $arg);
+            $array = array_flatten($arg);
         } else if ($arg) {
             $array [] = $arg;
         }
@@ -124,6 +130,42 @@ function array_merge_mixed() {
     return $array;
 }
 
+/**
+ * Convert multi-dimension array to one-dimension array.
+ * 
+ * @param array $array array to convert
+ * @return array
+ */
+function flatten_array(array $array){
+    $return = array();
+    array_walk_recursive($array, function($a) use (&$return) { $return[] = $a; });
+    return $return;
+}
+
+/**
+ * Deeping merge between true arrays or string-like-arrays.
+ * 
+ * @param type $array string-like-array or ture array contains string like array
+ * @param type $return holds the expected result
+ */
+function str_array_to_array ($array, &$return) {
+    if (is_array($array)) {
+        array_walk_recursive($array, function($a) use (&$return) { flat($a, $return); });
+    } else if (is_string($array) && stripos($array, '[') !== false) {
+        $array = explode(',', trim($array, "[]"));
+        flat($array, $return);
+    } else {
+        $return[] = $array;
+    }
+}
+
+/**
+ * Uniquifying the passed filename  against to the files located in the given path.
+ *   
+ * @param type $path directory path 
+ * @param string $filename filename to uniquify 
+ * @return string the old filename if its already unique or new name
+ */
 function uniqueFile($path, $filename) {
     $fileparts = explode('.', $filename);
     $fileext = end($fileparts);
@@ -148,9 +190,10 @@ function multiexplode(array $delimiters, $string) {
 }
 
 /**
-  Check whether the input is an array whose keys are all integers.
-  @param[in] $InputArray          (array) Input array.
-  @return                         (bool) \b true iff the input is an array whose keys are all integers.
+ * Check whether the input is an array whose keys are all integers.
+ * 
+ * @param[in] $InputArray          (array) Input array.
+ * @return                         (bool) \b true iff the input is an array whose keys are all integers.
  */
 function isKeyIntArray($InputArray) {
     if (!is_array($InputArray)) {
@@ -165,9 +208,9 @@ function isKeyIntArray($InputArray) {
 }
 
 /**
-  Check whether the input is an array whose keys are all strings.
-  @param[in] $InputArray          (array) Input array.
-  @return                         (bool) \b true iff the input is an array whose keys are all strings.
+ * Check whether the input is an array whose keys are all strings.
+ * @param[in] $InputArray          (array) Input array.
+ * @return                         (bool) \b true iff the input is an array whose keys are all strings.
  */
 function isKeyStringArray($InputArray) {
     if (!is_array($InputArray)) {
@@ -182,9 +225,10 @@ function isKeyStringArray($InputArray) {
 }
 
 /**
-  Check whether the input is an array with at least one key being an integer and at least one key being a string.
-  @param $InputArray          (array) Input array.
-  @return                         (bool) \b true iff the input is an array with at least one key being an integer and at least one key being a string.
+ * Check whether the input is an array with at least one key being an integer and at least one key being a string.
+ * 
+ * @param $InputArray          (array) Input array.
+ * @return                         (bool) \b true iff the input is an array with at least one key being an integer and at least one key being a string.
  */
 function isKeyMixedArray($InputArray) {
     if (!is_array($InputArray)) {
@@ -199,9 +243,10 @@ function isKeyMixedArray($InputArray) {
 }
 
 /**
-  Check whether the input is an array whose keys are numeric, sequential, and zero-based.
-  @param[in] $InputArray          (array) Input array.
-  @return                         (bool) \b true iff the input is an array whose keys are numeric, sequential, and zero-based.
+ * Check whether the input is an array whose keys are numeric, sequential, and zero-based.
+ * 
+ * @param[in] $InputArray          (array) Input array.
+ * @return                         (bool) \b true iff the input is an array whose keys are numeric, sequential, and zero-based.
  */
 function isKeyNumZeroBasedArray($InputArray) {
     if (!is_array($InputArray)) {
@@ -215,13 +260,26 @@ function isKeyNumZeroBasedArray($InputArray) {
     return array_keys($InputArray) === range(0, count($InputArray) - 1);
 }
 
+/**
+ * Get the base class name from object of string class name.
+ * 
+ * @param string|object $cls
+ * @return string
+ */
 function getClassBaseName($cls) {
     if (is_object($cls)) {
         $cls = get_class($cls);
     }
-    $cls = explode('\\', $cls);
-    return $cls[count($cls) - 1];
+    return end(explode('\\', $cls));
 }
+
+/**
+ * Apply the passed callable to eash element to the given array.
+ * 
+ * @param array $arr
+ * @param Closure $callable
+ * @return array 
+ */
 
 function loop(array $arr, Closure $callable) {
     foreach ($arr as $key => $value) {
@@ -230,15 +288,33 @@ function loop(array $arr, Closure $callable) {
     return $arr;
 }
 
+/**
+ * Convert the passed array to an object.
+ * 
+ * @param array $arr array to be converted
+ * @return object
+ */
 function arr2obg(array $arr) {
     return json_decode(json_encode($arr));
 }
 
+/**
+ * Convert the passed object to an array.
+ * 
+ * @param object $obj object to be converted
+ * @return array
+ */
 function obj2arr(object $obj) {
     return json_decode(json_encode($obj), true);
-    ;
 }
 
+/**
+ * Scan the given image and convert it to a PNG image.
+ * 
+ * @param string $source the path to source image
+ * @param string  [$target] the target output
+ * @return boolean
+ */
 function scanImageToPng($source, $target = 'php://output') {
     $sourceImg = @imagecreatefromstring(@file_get_contents($source));
     if ($sourceImg === false) {
@@ -254,6 +330,13 @@ function scanImageToPng($source, $target = 'php://output') {
     return TRUE;
 }
 
+/**
+ * Convert the given text to its slug representation.
+ * 
+ * @param string $text text to be converted
+ * @param boolean $translate convert arabic into franco 
+ * @return string
+ */
 function slugify($text, $translate = false) {
     $replace = [
         '&lt;' => '', '&gt;' => '', '&#039;' => '', '&amp;' => '',
@@ -321,11 +404,13 @@ function slugify($text, $translate = false) {
 }
 
 /**
+ * Insert the element into the given array at the passed position.
+ * 
  * @param array      $array
  * @param mixed      $position
  * @param mixed      $element
  */
-function array_insert(&$array, $position, $element) {
+function array_insert(array &$array, $position, $element) {
     if (count($array) == 0) {
         $array[] = $element;
     } elseif (is_numeric($position) && $position < 0) {
@@ -351,7 +436,16 @@ function array_insert(&$array, $position, $element) {
     $array = array_merge($array);
     return $array;
 }
-
+/**
+ * Insert the element into the passed input before the given index. 
+ * 
+ * @param array $input
+ * @param mixed $index
+ * @param mixed $element
+ * @param mixed $newKey
+ * @return type
+ * @throws Exception
+ */
 function insertBefore(&$input, $index, $element, $newKey = null) {
     if (!array_key_exists($index, $input)) {
         throw new Exception("Index not found");
@@ -375,6 +469,17 @@ function insertBefore(&$input, $index, $element, $newKey = null) {
     $input = $tmpArray;
     return $input;
 }
+
+/**
+ * Insert the element into the passed input after the given index. 
+ * 
+ * @param array $input
+ * @param mixed $index
+ * @param mixed $element
+ * @param mixed $newKey
+ * @return type
+ * @throws Exception
+ */
 
 function insertAfter(&$input, $index, $element, $newKey = null) {
     if (!array_key_exists($index, $input)) {
@@ -409,6 +514,13 @@ function ar2en($text) {
     $obj = new I18N_Arabic('Transliteration');
     return $obj->ar2en($text);
 }
+
+/**
+ * Convert timestamp to arabic human readable format.
+ * 
+ * @param long $timestamp
+ * @return string
+ */
 
 function arabic_date_format($timestamp) {
     $periods = array(
