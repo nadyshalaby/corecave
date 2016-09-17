@@ -13,7 +13,7 @@ class MessageController extends Controller {
 
     public function index() {     
         $msgs = Message::latest()->where('to','me')->orWhere('to',Auth::getUser()->email)->get();
-        return twig('admin/pages/messages.html',  compact('msgs'));
+        return _twig('admin/pages/messages.html',  compact('msgs'));
     }
     
      public function view($id) {

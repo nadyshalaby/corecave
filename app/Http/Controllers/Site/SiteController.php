@@ -15,12 +15,12 @@ class SiteController extends Controller {
 
     public function arabic() {
         Session::put('site', 'site.arabic');
-        return twig('site/index-ar.html');
+        return _twig('site/index-ar.html');
     }
 
     public function english() {
         Session::put('site', 'site.english');
-        return twig('site/index-en.html');
+        return _twig('site/index-en.html');
     }
 
     public function contact(Request $r) {
@@ -34,7 +34,7 @@ class SiteController extends Controller {
 
         $msg->save();
 
-        goBack()->flash('success', 'Thanks, ' . $r->getParam('contact-name') . ' (^_^)! \n Your message has been recorded');
+        _goBack()->flash('success', 'Thanks, ' . $r->getParam('contact-name') . ' (^_^)! \n Your message has been recorded');
     }
 
     public function order(Request $r) {
@@ -60,11 +60,11 @@ class SiteController extends Controller {
         if ($r->hasFile('order-attachment')) {
             $file = $r->getFile('order-attachment');
             if (!$file->hasExtension(['zip', 'ZIP', 'rar', 'RAR'])) {
-                goBack()->flash('warning', 'Please compress your files as ZIP or RAR before uploading, and try again');
+                _goBack()->flash('warning', 'Please compress your files as ZIP or RAR before uploading, and try again');
                 return;
             }
             if (!$file->upload(Config::extra('uploads.compressed'), null, false)) {
-                goBack()->flash('error', 'There is an error uploading the file');
+                _goBack()->flash('error', 'There is an error uploading the file');
                 return;
             }
             
@@ -73,7 +73,7 @@ class SiteController extends Controller {
 
         $order->save();
         
-        goBack()->flash('success', 'Thanks, ' . $r->getParam('order-firstname') . ' ' . $r->getParam('order-lastname') . ' (^_^)! \n Your order has been submitted');
+        _goBack()->flash('success', 'Thanks, ' . $r->getParam('order-firstname') . ' ' . $r->getParam('order-lastname') . ' (^_^)! \n Your order has been submitted');
     }
 
 }

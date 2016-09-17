@@ -22,7 +22,7 @@ return [
         'password' => '',
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
-        'dbfile' => 'freeziana.sql', // filename to be used for auto-importing for the database
+        'dbfile' => ['zakaa.sql','sessions.sql'], // filename or array of filenames to be used for auto-importing for the database
         'dbrestore' => false, // flag to determine whether to restore the database or not
         'fetch_mode' => PDO::FETCH_CLASS,
         'prefix' => '',

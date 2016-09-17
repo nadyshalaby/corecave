@@ -10,14 +10,14 @@ use App\Libs\Concretes\Validation;
 class AuthController extends Controller {
 
     public function index(Validation $v) {
-        return twig('admin/pages/login.html');
+        return _twig('admin/pages/login.html');
     }
 
     public function signin(Request $r, Authentication $auth) {
         if ($auth->login($r->getParam('email'), $r->getParam('password'), $r->hasParam('remember'))) {
-            redirect(route('home'));
+            _redirect(_route('home'));
         } else {
-            goBack()->flash('error', 'Invalid credentials, try again...');
+            _goBack()->flash('error', 'Invalid credentials, try again...');
         }
     }
 

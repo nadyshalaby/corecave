@@ -14,7 +14,7 @@ use App\Libs\Concretes\Request;
 class OrderMiddleware extends Middleware {
 
     public function control($next, Request $r) {
-        if (validate($r->getAllParams(), [
+        if (_validate($r->getAllParams(), [
                     'order-firstname' => [
                         'required' => true,
                         'title' => 'First name',
@@ -75,7 +75,7 @@ class OrderMiddleware extends Middleware {
                 ])->passed()) {
             return $next();
         } else {
-            goBack();
+            _goBack();
         }
     }
 

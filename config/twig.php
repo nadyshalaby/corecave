@@ -7,12 +7,12 @@ use Carbon\Carbon;
 
 return [
     'config' => [
-        'cache' => path('storage.cache'),
+        'cache' => _path('storage.cache'),
         'debug' => true, //used for development purposes 
 // 'auto_reload' => true, // if it didn't set it will be determined from the value of debug option
     ],
     'globals' => [
-        'errors' => validate(), // or callable
+        'errors' => _validate()->errors(), // or callable
         'auth' => function () {
             return new Authentication;
         }, 
@@ -24,12 +24,13 @@ return [
      *  (eg. Session::has($str) will be called session_has($str)) 
      */
     'static_functions' => [
-        'Url',
-        'Session',
-        'Token',
+        'Url', // 'Url' => 'url'
+//        'Session',
+//        'Token',
     ],
     'member_functions' => [
-        'App\Libs\Concretes\Validation' => ''
+//        'App\Libs\Concretes\Validation' => ''
+        'App\Libs\Concretes\Validation'
     ],
     'callable_functions' => [
         'social' => function ($c) {
@@ -52,11 +53,11 @@ return [
                 $t = new Carbon($time);
                 return $t->diffForHumans();
             }
-            return arabic_date_format(strtotime($time));
+            return _arabicDateFormat(strtotime($time));
         },
         'getErrors' => function () {
             $msgs = '';
-            foreach (validate()->getAllErrorMsgs() as $value) {
+            foreach (_validate()->getAllErrorMsgs() as $value) {
                 $msgs .= $value . '\n';
             }
             return $msgs;
@@ -64,7 +65,7 @@ return [
     ],
     'filters' => [
         'e' => function ($str) {
-            return escape($str);
+            return _escape($str);
         },
     ],
 ];

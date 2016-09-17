@@ -16,7 +16,7 @@ use function goBack;
 class ContactMiddleware extends Middleware {
     
     public function control($next,  Request $r) {
-        if(validate($r->getAllParams(), [
+        if(_validate($r->getAllParams(), [
             'contact-name' => [
                 'required' => true,
                 'title' => 'Your Name'
@@ -34,7 +34,7 @@ class ContactMiddleware extends Middleware {
         ])->passed()){
             return $next();
         }else{
-            goBack();
+            _goBack();
         }
     }
 }

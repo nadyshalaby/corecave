@@ -1,10 +1,18 @@
 <?php
 
-use App\Libs\Concretes\DB;
-use App\Libs\Concretes\Router;
-use App\Libs\Statics\Config;
-use App\Libs\Statics\Container;
-use App\Libs\Statics\Sessioner;
+/**
+ * This file is part of kodekit framework
+ * 
+ * @copyright (c) 2015-2016, nady shalaby
+ * 
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+use App\Core\DAL\DB;
+use App\Core\Http\Bags\DI\Container;
+use App\Core\Http\Bags\Sessions\Sessioner;
+use App\Core\Http\Routing\Router;
+use App\Core\Support\Config;
 use Illuminate\Container\Container as DIContainer;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Events\Dispatcher;
@@ -16,8 +24,6 @@ class App {
         //autoloading classes
         require_once 'vendor/autoload.php';
 
-        //starting the sessions
-        Sessioner::sessionStart(Config::extra('session.timeout'));
 
         //loading the aliases for classes
         $this->loadAliases();
@@ -27,6 +33,9 @@ class App {
 
         //setting up elquont
         $this->setup_elquont();
+
+        //starting the sessions
+        Sessioner::sessionStart();
 
         //building the database schema if the dbrestore = true
         if (!DB::getInstance()->buildDB()) {
@@ -38,9 +47,14 @@ class App {
         $bindings = include Config::container();
         Container::bindAll($bindings);
 
-        // setting up routes to pages
+        // setting up routes pages
         $route = Container::bind(Router::class, new Router);
-        require_once 'app/Http/routes.php';
+
+        foreach (_deepDirScan(_path('routes')) as $r) {
+            if (_fileHasExtension($r, 'php')) {
+                require_once $r;
+            }
+        }
     }
 
     private function loadAliases() {
@@ -73,4 +87,3 @@ class App {
     }
 
 }
-

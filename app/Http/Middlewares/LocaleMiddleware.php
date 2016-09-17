@@ -15,13 +15,13 @@ class LocaleMiddleware extends Middleware {
 
     function control(Request $r, $next) {
         if ($r->getPrevUrl() && $r->isForeign() && $r->hasSession('site')) {
-            $prev = route($r->getSession('site'));
+            $prev = _route($r->getSession('site'));
             $current = $r->getFullUrl();
             if ($prev === $current) {
                 return $next();
             }
 
-            redirect($prev);
+            _redirect($prev);
         } else {
             return $next();
         }

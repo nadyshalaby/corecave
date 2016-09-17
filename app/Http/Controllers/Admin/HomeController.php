@@ -9,13 +9,13 @@ use Response;
 class HomeController extends Controller {
 
     public function index() {
-        return twig('admin/pages/dashboard.html');
+        return _twig('admin/pages/dashboard.html');
     }
     
     public function download($file) {
         $path = Config::extra('uploads.compressed');
         if(!file_exists("$path/$file")){
-            goBack()->flash('error',' The file not found');
+            _goBack()->flash('error',' The file not found');
         }
         Response::download("$path/$file");
     }

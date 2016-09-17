@@ -11,12 +11,12 @@ class ProfileController extends Controller {
 
     public function index() {
         $user = Auth::getUser();
-        return twig('admin/pages/profile.html', compact('user'));
+        return _twig('admin/pages/profile.html', compact('user'));
     }
 
     public function logout() {
         Auth::logout();
-        redirect(route('site.english'));
+        _redirect(_route('site.english'));
     }
 
     public function update(Request $r) {
@@ -35,14 +35,14 @@ class ProfileController extends Controller {
             ];
 
             if (Auth::updateUser($user)) {
-                flash('success', 'Your profile successfully updated');
+                __flash('success', 'Your profile successfully updated');
             } else {
-                flash('warning', 'Your profile not updated');
+                __flash('warning', 'Your profile not updated');
             }
         } else {
-            flash("error", 'Password is incorrect');
+            __flash("error", 'Password is incorrect');
         }
-        goBack();
+        _goBack();
     }
 
 }

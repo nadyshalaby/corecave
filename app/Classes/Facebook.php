@@ -1,8 +1,18 @@
 <?php
 
+/**
+ * This file is part of kodekit framework
+ * 
+ * @copyright (c) 2015-2016, nady shalaby
+ * 
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace App\Classes;
 
-use App\Libs\Statics\Config;
+use App\Core\Support\Config;
+use Facebook\Facebook;
 
 class Facebook {
 
@@ -97,7 +107,7 @@ class Facebook {
      */
 
     function __construct() {
-        $fb = new \Facebook\Facebook([
+        $fb = new Facebook([
             'app_id' => Config::extra('social.facebook.app_id'),
             'app_secret' => Config::extra('social.facebook.app_secret'),
             'default_graph_version' => Config::extra('social.facebook.default_graph_version'),
@@ -107,7 +117,7 @@ class Facebook {
     }
 
     public function getLoginUrl() {
-        return $this->helper->getLoginUrl(route('facebook'), $this->permissions);
+        return $this->helper->getLoginUrl(_route('facebook'), $this->permissions);
     }
 
 }

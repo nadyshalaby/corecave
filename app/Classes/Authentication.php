@@ -11,11 +11,12 @@
 
 namespace App\Classes;
 
-use App\Libs\Statics\Config;
-use App\Libs\Statics\Cookie;
-use App\Libs\Statics\Hash;
-use App\Libs\Statics\Session;
+use App\Core\Http\Bags\Cookies\Cookie;
+use App\Core\Http\Bags\Sessions\Session;
+use App\Core\Support\Config;
+use App\Core\Support\Hash;
 use App\Models\User;
+;
 
 class Authentication {
 

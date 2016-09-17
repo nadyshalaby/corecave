@@ -15,7 +15,7 @@ class SigninMiddleware extends Middleware{
     
 
     function control(Request $r , $next) {
-        if(validate($r->getAllParams(), [
+        if(_validate($r->getAllParams(), [
             'email' => [
                 'required' => true,
                 'title' => 'Your Email'
@@ -27,7 +27,7 @@ class SigninMiddleware extends Middleware{
         ])->passed()){     
             return $next();
         }else{
-            goBack();
+            _goBack();
         }
     }
 

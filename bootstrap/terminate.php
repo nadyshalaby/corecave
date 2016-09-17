@@ -1,3 +1,3 @@
 <?php
 
-validate()->clearErrors();
+

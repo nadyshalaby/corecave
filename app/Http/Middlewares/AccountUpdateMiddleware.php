@@ -15,7 +15,7 @@ class AccountUpdateMiddleware extends Middleware {
 
     function control($next, Request $r) {
 
-        if (validate($r->getAllParams(), [
+        if (_validate($r->getAllParams(), [
                     'fullname' => [
                         'required' => true,
                         'unicode_space' => true,
@@ -56,7 +56,7 @@ class AccountUpdateMiddleware extends Middleware {
                 ])->passed()) {
             return $next();
         } else {
-            goBack();
+            _goBack();
         }
     }
 

@@ -14,7 +14,7 @@ class OrderController extends Controller {
 
     public function index() {
         $orders = Order::latest()->get();
-        return twig('admin/pages/orders.html', compact('orders'));
+        return _twig('admin/pages/orders.html', compact('orders'));
     }
 
     public function view($id) {

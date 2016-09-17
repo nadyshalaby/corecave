@@ -9,7 +9,7 @@ class AuthMiddleware extends Middleware{
         if($auth->alive()){
             return $next();
         }else{
-            redirect(route('auth.signin'))->flash('Warning','Please Login first, and com back.');
+            _redirect(_route('auth.signin'))->flash('Warning','Please Login first, and com back.');
         }
     }
 

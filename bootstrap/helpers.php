@@ -1,31 +1,113 @@
 <?php
 
-use App\Libs\Statics\Url;
-
-function view($path, $args = []) {
+/**
+ * This file is part of kodekit framework
+ * 
+ * @copyright (c) 2015-2016, nady shalaby
+ * 
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+function _view($path, $args = []) {
     return View::show($path, $args);
 }
 
-function path($path) {
-    return Url::path($path);
-}
-
-function twig($path = null, $args = []) {
-    if ($path) {
-        return View::twig($path, $args);
+/**
+ * Translate the passed string into real path according to the application path.
+ * 
+ * <b>Note:</b>
+ * <p>
+ * if the path matches real directory it will be translated as directory path
+ *  and if it's something else it will be translated as filename</p>
+ * @param string $path
+ * @return string the translated url
+ */
+function _path($path) {
+    $chunks = _multiexplode(['.', '/', '>', '|','\\'], $path);
+    $sperator = DIRECTORY_SEPARATOR;
+    $path = implode($sperator, $chunks);
+    $path = realpath(__DIR__ . "{$sperator}..{$sperator}{$path}");
+    if (is_dir($path)) {
+        return $path;
+    } else {
+        $file_name = implode('.', array_slice($chunks, -2, 2));
+        $file_parent = implode($sperator, array_slice($chunks, 0, -2));
+        $path = __DIR__ . "{$sperator}..{$sperator}{$file_parent}{$sperator}{$file_name}";
+        if(file_exists($path)){
+            return realpath($path);
+        }
+        
+        return $path;
     }
-    return View::getTwig();
 }
 
-function route($name, $args = []) {
+/**
+ * Fetch or bind something from or to the container, if no args provided a new instance of 
+ * the DI container will be returned. 
+ * 
+ * @param mixed $name key name to be binded
+ * @param mixed|callable $binding 
+ * @return \Container
+ */
+function _container() {
+    
+    $args = func_get_args();
+    $count = count($args);
+    
+    switch ($count){
+        case 0:
+            return new Container;
+        case 1:
+            return Container::fetch($args[0]);
+        case 2:
+            return Container::override($args[0],$args[1]);
+    }  
+}
+
+/**
+ * Render twig view.
+ * 
+ * @param string $path
+ * @param array $args
+ * @return object
+ */
+function _twig($path = null, $args = []) {
+    if ($path) {
+        return Twig::render($path, $args);
+    }
+    return Twig::getInstance();
+}
+
+/**
+ * Construct the route url that have the passed name.
+ * 
+ * @param string $name name of route
+ * @param mixed $args identifiers values
+ * @return string
+ */
+function _route($name, $args = []) {
     return Url::route($name, $args);
 }
 
-function action($name, $args = []) {
+/**
+ * Construct the route url that have the passed action.
+ * 
+ * @param string $name action of route
+ * @param mixed $args identifiers values
+ * @return string the url
+ */
+function _action($name, $args = []) {
     return Url::action($name, $args);
 }
 
-function flash($name, $content = null) {
+/**
+ * Flash the content to the session for only one use.
+ * 
+ * @param mixed $name 
+ * @param mixed $content
+ * @return object
+ */
+function _flash($name, $content = null) {
     return Response::flash($name, $content);
 }
 
@@ -33,7 +115,7 @@ function flash($name, $content = null) {
  * Checks if the given array follows the specified rules on each field passed.eg
  * <b>Example:</b>
  * <pre>
- * 	validate($array,[
+ * 	_validate($array,[
  * 	                              		'password' => [
  *                                                      'required' => true,
  *                                                      'field' => 'nr_password', // st_password,nr_password,username,url,color,ip,tag,email,phone;
@@ -55,40 +137,40 @@ function flash($name, $content = null) {
  * 	 	                              		'equals' => ['password1','password2','password3'],
  * 		                               ],
  * 		                     ]);
- * 	if (validate()->passed()){
+ * 	if (_validate()->passed()){
  * 		echo 'Ok';
  * 	}else{
- * 		echo '<pre>',print_r(validate()->getErrors()),'</pre>';
+ * 		echo '<pre>',print_r(_validate()->getErrors()),'</pre>';
  * 	}
  * </pre>
  * @param array $data 
  * @param array $param_rules 
  * @return obj|boolean
  */
-function validate(array $data = null, array $param_rules = [], array $error_msgs = []) {
+function _validate(array $data = null, array $field_rules = [], array $msgs = []) {
     if ($data) {
-        return Validation::check($data, $param_rules, $error_msgs);
+        return Validation::validate($data, $field_rules, $msgs);
     }
     return Validation::getInstance();
 }
 
-function redirect($location, $with = [], $after = 0) {
+function _redirect($location, $with = [], $after = 0) {
     return Response::redirectTo($location, $with, $after);
 }
 
-function goBack($with = [], $after = 0) {
+function _goBack($with = [], $after = 0) {
     return Response::redirectBack($with, $after);
 }
 
-function refresh($after = 0) {
+function _refresh($after = 0) {
     return Response::refresh($after);
 }
 
-function escape($string) {
+function _escape($string) {
     return htmlentities($string, ENT_QUOTES, 'UTF-8');
 }
 
-function string_replace_first($search, $replace, $subject) {
+function _strReplaceFirst($search, $replace, $subject) {
     $pos = strpos($subject, $search);
     if ($pos !== false) {
         return substr_replace($subject, $replace, $pos, strlen($search));
@@ -96,9 +178,9 @@ function string_replace_first($search, $replace, $subject) {
     return $subject;
 }
 
-function array_fetch(array $array, $path_to_key, $default = null) {
+function _arrayFetch(array $array, $path_to_key, $default = null) {
 
-    $path_to_key = multiexplode(['|', '/', '-', '>', ',', '.', ' '], $path_to_key);
+    $path_to_key = _multiexplode(['|', '/', '-', '>', ',', '.', ' '], $path_to_key);
 
     foreach ($path_to_key as $key) {
         $key = trim($key);
@@ -118,11 +200,11 @@ function array_fetch(array $array, $path_to_key, $default = null) {
  * @param $...args $mixed args to be merged
  * @return type
  */
-function array_merge_mixed() {
+function _arrayMergeMixed() {
     $array = [];
     foreach (func_get_args() as $arg) {
         if (is_array($arg)) {
-            $array = array_flatten($arg);
+            $array = _flattenArray($arg);
         } else if ($arg) {
             $array [] = $arg;
         }
@@ -131,29 +213,33 @@ function array_merge_mixed() {
 }
 
 /**
- * Convert multi-dimension array to one-dimension array.
+ * Convert multi-dimension array into one-dimension array.
  * 
  * @param array $array array to convert
  * @return array
  */
-function flatten_array(array $array){
+function _flattenArray(array $array) {
     $return = array();
-    array_walk_recursive($array, function($a) use (&$return) { $return[] = $a; });
+    array_walk_recursive($array, function($a) use (&$return) {
+        $return[] = $a;
+    });
     return $return;
 }
 
 /**
- * Deeping merge between true arrays or string-like-arrays.
+ * Deeping merge between arrays or string-like-arrays.
  * 
- * @param type $array string-like-array or ture array contains string like array
+ * @param type $array string-like-array or array contains string like array
  * @param type $return holds the expected result
  */
-function str_array_to_array ($array, &$return) {
+function _strArrayToArray($array, &$return) {
     if (is_array($array)) {
-        array_walk_recursive($array, function($a) use (&$return) { flat($a, $return); });
+        array_walk_recursive($array, function($a) use (&$return) {
+            _flattenArray($a, $return);
+        });
     } else if (is_string($array) && stripos($array, '[') !== false) {
         $array = explode(',', trim($array, "[]"));
-        flat($array, $return);
+        _flattenArray($array, $return);
     } else {
         $return[] = $array;
     }
@@ -166,7 +252,7 @@ function str_array_to_array ($array, &$return) {
  * @param string $filename filename to uniquify 
  * @return string the old filename if its already unique or new name
  */
-function uniqueFile($path, $filename) {
+function _uniqueFile($path, $filename) {
     $fileparts = explode('.', $filename);
     $fileext = end($fileparts);
     array_pop($fileparts);
@@ -178,12 +264,13 @@ function uniqueFile($path, $filename) {
 }
 
 /**
- * explode the the given string according to the specified array of delimiters
+ * explode the the given string according to the specified array of delimiters.
+ * 
  * @param array $delimiters 
  * @param string $string 
  * @return array
  */
-function multiexplode(array $delimiters, $string) {
+function _multiexplode(array $delimiters, $string) {
     $ready = str_replace($delimiters, $delimiters[0], $string);
     $launch = explode($delimiters[0], $ready);
     return $launch;
@@ -195,7 +282,7 @@ function multiexplode(array $delimiters, $string) {
  * @param[in] $InputArray          (array) Input array.
  * @return                         (bool) \b true iff the input is an array whose keys are all integers.
  */
-function isKeyIntArray($InputArray) {
+function _isKeyIntArray($InputArray) {
     if (!is_array($InputArray)) {
         return false;
     }
@@ -209,10 +296,11 @@ function isKeyIntArray($InputArray) {
 
 /**
  * Check whether the input is an array whose keys are all strings.
+ * 
  * @param[in] $InputArray          (array) Input array.
  * @return                         (bool) \b true iff the input is an array whose keys are all strings.
  */
-function isKeyStringArray($InputArray) {
+function _isKeyStringArray($InputArray) {
     if (!is_array($InputArray)) {
         return false;
     }
@@ -230,7 +318,7 @@ function isKeyStringArray($InputArray) {
  * @param $InputArray          (array) Input array.
  * @return                         (bool) \b true iff the input is an array with at least one key being an integer and at least one key being a string.
  */
-function isKeyMixedArray($InputArray) {
+function _isKeyMixedArray($InputArray) {
     if (!is_array($InputArray)) {
         return false;
     }
@@ -248,7 +336,7 @@ function isKeyMixedArray($InputArray) {
  * @param[in] $InputArray          (array) Input array.
  * @return                         (bool) \b true iff the input is an array whose keys are numeric, sequential, and zero-based.
  */
-function isKeyNumZeroBasedArray($InputArray) {
+function _isKeyNumZeroBasedArray($InputArray) {
     if (!is_array($InputArray)) {
         return false;
     }
@@ -261,16 +349,53 @@ function isKeyNumZeroBasedArray($InputArray) {
 }
 
 /**
+ * Check if the given file has mime matches one of the given mimes.
+ * 
+ * @param string $filename path to file
+ * @param string|array $mimeorMimes string or array of mimes to check against
+ * @return boolean
+ */
+function _fileHasMime($filename, $mimeorMimes) {
+    $mime = mime_content_type($filename);
+    if (is_array($mimeorMimes) && in_array($mime, $mimeorMimes)) {
+        return true;
+    } else {
+        return $mime === $mimeorMimes;
+    }
+}
+
+/**
+ * Check if the given file has extension matches one of the given extensions.
+ * 
+ * @param string $filename path to file
+ * @param string|array $extensionOrExtensions string or array of extensions to check against
+ * @return boolean
+ */
+function _fileHasExtension($filename, $extensionOrExtensions, $case_in_sensitive = true) {
+    $parts = explode('.', $filename);
+    $extension = end($parts);
+    if ($case_in_sensitive) {
+        $extension = strtolower($extension);
+    }
+    if (is_array($extensionOrExtensions) && in_array($extension, $extensionOrExtensions)) {
+        return true;
+    } else {
+        return $extension === $extensionOrExtensions;
+    }
+}
+
+/**
  * Get the base class name from object of string class name.
  * 
  * @param string|object $cls
  * @return string
  */
-function getClassBaseName($cls) {
+function _getClassBaseName($cls) {
     if (is_object($cls)) {
         $cls = get_class($cls);
     }
-    return end(explode('\\', $cls));
+    $arr = explode('\\', $cls);
+    return end($arr);
 }
 
 /**
@@ -280,8 +405,7 @@ function getClassBaseName($cls) {
  * @param Closure $callable
  * @return array 
  */
-
-function loop(array $arr, Closure $callable) {
+function _loop(array $arr, Closure $callable) {
     foreach ($arr as $key => $value) {
         $arr[$key] = call_user_func_array($callable, [$key, $value]);
     }
@@ -294,7 +418,7 @@ function loop(array $arr, Closure $callable) {
  * @param array $arr array to be converted
  * @return object
  */
-function arr2obg(array $arr) {
+function _arr2obg(array $arr) {
     return json_decode(json_encode($arr));
 }
 
@@ -304,7 +428,7 @@ function arr2obg(array $arr) {
  * @param object $obj object to be converted
  * @return array
  */
-function obj2arr(object $obj) {
+function _obj2arr(object $obj) {
     return json_decode(json_encode($obj), true);
 }
 
@@ -315,7 +439,7 @@ function obj2arr(object $obj) {
  * @param string  [$target] the target output
  * @return boolean
  */
-function scanImageToPng($source, $target = 'php://output') {
+function _scanImageToPng($source, $target = 'php://output') {
     $sourceImg = @imagecreatefromstring(@file_get_contents($source));
     if ($sourceImg === false) {
         return FALSE;
@@ -337,7 +461,7 @@ function scanImageToPng($source, $target = 'php://output') {
  * @param boolean $translate convert arabic into franco 
  * @return string
  */
-function slugify($text, $translate = false) {
+function _slugify($text, $translate = false) {
     $replace = [
         '&lt;' => '', '&gt;' => '', '&#039;' => '', '&amp;' => '',
         '&quot;' => '', 'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'Ae',
@@ -391,7 +515,7 @@ function slugify($text, $translate = false) {
     $text = preg_replace('/[^A-Za-z0-9-\pL]+/u', '-', $text);
 
     if ($translate) {
-        $text = ar2en($text);
+        $text = _ar2en($text);
     }
 
     $text = trim($text, ' -');
@@ -409,13 +533,14 @@ function slugify($text, $translate = false) {
  * @param array      $array
  * @param mixed      $position
  * @param mixed      $element
+ * @return array 
  */
-function array_insert(array &$array, $position, $element) {
+function _arrayInsert(array &$array, $position, $element) {
     if (count($array) == 0) {
         $array[] = $element;
     } elseif (is_numeric($position) && $position < 0) {
         if ((count($array) + position) < 0) {
-            $array = array_insert($array, $element, 0);
+            $array = _arrayInsert($array, $element, 0);
         } else {
             $array[count($array) + $position] = $element;
         }
@@ -436,6 +561,7 @@ function array_insert(array &$array, $position, $element) {
     $array = array_merge($array);
     return $array;
 }
+
 /**
  * Insert the element into the passed input before the given index. 
  * 
@@ -446,7 +572,7 @@ function array_insert(array &$array, $position, $element) {
  * @return type
  * @throws Exception
  */
-function insertBefore(&$input, $index, $element, $newKey = null) {
+function _insertBefore(&$input, $index, $element, $newKey = null) {
     if (!array_key_exists($index, $input)) {
         throw new Exception("Index not found");
     }
@@ -480,8 +606,7 @@ function insertBefore(&$input, $index, $element, $newKey = null) {
  * @return type
  * @throws Exception
  */
-
-function insertAfter(&$input, $index, $element, $newKey = null) {
+function _insertAfter(&$input, $index, $element, $newKey = null) {
     if (!array_key_exists($index, $input)) {
         throw new Exception("Index not found");
     }
@@ -505,12 +630,12 @@ function insertAfter(&$input, $index, $element, $newKey = null) {
     return $input;
 }
 
-function en2ar($text) {
+function _en2ar($text) {
     $obj = new I18N_Arabic('Transliteration');
     return $obj->en2ar($text);
 }
 
-function ar2en($text) {
+function _ar2en($text) {
     $obj = new I18N_Arabic('Transliteration');
     return $obj->ar2en($text);
 }
@@ -521,8 +646,7 @@ function ar2en($text) {
  * @param long $timestamp
  * @return string
  */
-
-function arabic_date_format($timestamp) {
+function _arabicDateFormat($timestamp) {
     $periods = array(
         "second" => "ثانية",
         "seconds" => "ثواني",
@@ -601,12 +725,48 @@ function arabic_date_format($timestamp) {
 }
 
 /**
+ * Deep directory scan to list all files and directories located in the given path.
+ *   
+ * @param string $dir directory path 
+ * @param bool [$include_dirs] include the sub directory pathes with the return result to not
+ * @param array $results
+ * @return array
+ */
+function _deepDirScan($dir, $include_dirs = false, array &$results = array()) {
+    $files = scandir($dir);
+
+    foreach ($files as $value) {
+        $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
+        if (in_array($value, [".", ".."])) {
+            continue;
+        }
+
+        if (is_dir($path)) {
+            _deepDirScan($path, $include_dirs, $results);
+            if ($include_dirs) {
+                $results[] = $path;
+            }
+        } else {
+            $results[] = $path;
+        }
+    }
+
+    return $results;
+}
+
+/**
  * dump the variables and kill the rest of page
  * @param  mixed $args string to be displayed after killing the page
  */
-if (!function_exists('dd')) {
+if (!function_exists('_dd')) {
 
-    function dd() {
+    /**
+     * Dump the passed variables and end the script.
+     *
+     * @param  mixed
+     * @return void
+     */
+    function _dd() {
         $args = func_get_args();
         call_user_func_array('dump', $args);
         die();

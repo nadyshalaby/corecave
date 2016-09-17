@@ -14,7 +14,7 @@ use App\Libs\Concretes\Middleware;
 class RedirectIfAuthenticatedMiddleware extends Middleware {
     public function control($next , Authentication $auth ) {
         if($auth->alive()){
-            redirect(route('home'))->flash('error','You are already signed in.');
+            _redirect(_route('home'))->flash('error','You are already signed in.');
         }else{
             return $next();
         }

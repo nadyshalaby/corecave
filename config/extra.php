@@ -4,14 +4,28 @@ return [
     'cookie' => [
         'remember_me' => 'hash',
         'remember_me_expiry' => '+1 week',
+        'encrypted_data' => true,
     ],
     'session' => [
         'user_data' => 'user',
-        'timeout' => 0, // 'timeout' => 30 // computed as 30 secs
+        'encrypted_data' => false,
+        'name' => 'CoreCaveSession', 
+        'timeout' => 0, // 'timeout' => 30 >>> computed as 30 secs
+        'use_db_handler' => true,
+        'db_handler_options' => [
+            'create_table' => false,
+            'table' => null,
+            'id_col' => null,
+            'data_col' => null,
+            'lifetime_col' => null,
+            'time_col' => null,
+            'connection_options' => null,
+            'lock_mode' => null,
+        ],
     ],
     'uploads' => [
-        'compressed' => path('storage.uploads.compressed'),
-        'images' => path('storage.uploads.images'),
+        'compressed' => _path('storage.uploads.compressed'),
+        'images' => _path('storage.uploads.images'),
     ],
     'social' => [
         'facebook' => [
