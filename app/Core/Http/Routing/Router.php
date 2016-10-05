@@ -34,7 +34,8 @@ class Router {
 
     public function __construct() {
         $this->resolver = new Resolver;
-        $this->url = trim(Request::getParam('url'), '/');
+        $this->url = trim(Request::pullParam('u'), '/');
+//        die($this->url);
         if (empty($this->url)) {
             $this->url = '/';
         }
@@ -333,7 +334,7 @@ class Router {
     public function __destruct() {
 
         if (Config::app('maintenance') === true) {
-            Response::withError(503, "Be Right Back Soon!");
+            Response::withStatus(503, "Be Right Back Soon!");
         }
 
         $app_middleware = Config::app('app_middleware');
@@ -400,7 +401,7 @@ class Router {
                         }
                     }
                 }
-                Response::withError(404, 'Page Not Found.');
+                Response::withNotFound('Page Not Found.');
             } else {
                 throw new BadRequestException('Unauthorized: Access is denied, REQUEST_METHOD not found');
             }

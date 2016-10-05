@@ -36,7 +36,7 @@ class Resolver {
      */
     public function resolve($class) {
         if (Container::isBinded($class)) {
-            return Container::fetch($class);
+            return Container::binding($class);
         }
         $reflector = new ReflectionClass($class);
         if (!$reflector->isInstantiable()) {

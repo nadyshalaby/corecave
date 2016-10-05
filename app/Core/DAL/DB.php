@@ -69,7 +69,7 @@ class DB {
     protected function __construct() {
         try {
             // setting up the main PDO connection
-            $this->_pdo = Container::fetch('db');
+            $this->_pdo = Container::binding('db');
 
             //grapping the <code>fetch_mode</code> flag from the config array
             $fetchMode = Config::app("db>fetch_mode");

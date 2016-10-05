@@ -40,9 +40,9 @@ abstract class Forger {
         $class = static::getForgedClass();
         
         if(Container::isBinded($class)){
-            return Container::fetch($class);
+            return Container::binding($class);
         }
         
-        return Container::bind($class, (new Resolver)->resolve($class));
+        return Container::binding($class, (new Resolver)->resolve($class));
     }
 }

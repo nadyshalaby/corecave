@@ -20,26 +20,55 @@ class Request {
 
     protected $session;
     protected $cookie;
+    protected $_params;
 
     public function __construct() {
         $this->session = new Session;
         $this->cookie = new Cookie;
+        
+        if( $this->isPut()){
+                parse_str(file_get_contents("php://input"), $_REQUEST);
+        }
+        
+        $this->_params = $this->cleanParams($_REQUEST);
     }
+    
 
     public function isPost() {
-        return ($_POST && !$this->hasParam('_method')) ? true : false;
+        return ($this->getMethod() === 'POST' && !$this->hasParam('_method')) ? true : false;
     }
 
     public function isGet() {
-        return ($_GET && !$this->hasParam('_method')) ? true : false;
+        return ($this->getMethod() === 'GET' && !$this->hasParam('_method')) ? true : false;
     }
 
     public function isPut() {
+        if($this->getMethod() === 'PUT') {
+            return true ;
+        }
+        
         return ($this->isPost() && $this->getParam('_method') === 'PUT') ? true : false;
     }
 
     public function isDelete() {
+         if($this->getMethod() === 'DELETE') {
+            return true ;
+        }
         return ($this->isPost() && $this->getParam('_method') === 'DELETE') ? true : false;
+    }
+    
+    public function isHead() {
+         if($this->getMethod() === 'HEAD') {
+            return true ;
+        }
+        return ($this->isPost() && $this->getParam('_method') === 'HEAD') ? true : false;
+    }
+    
+    public function isOptions() {
+         if($this->getMethod() === 'OPTIONS') {
+            return true ;
+        }
+        return ($this->isPost() && $this->getParam('_method') === 'OPTIONS') ? true : false;
     }
 
     public function isForeign() {
@@ -50,7 +79,7 @@ class Request {
     }
 
     public function getParam($name) {
-        return ($this->hasParam($name)) ? ($_REQUEST[$name]) : null;
+        return ($this->hasParam($name)) ? ($this->_params[$name]) : null;
     }
 
     public function pullParam($name) {
@@ -63,33 +92,33 @@ class Request {
     }
 
     public function hasParam($name) {
-        return (isset($_REQUEST[$name])) && !empty($_REQUEST[$name]);
+        return (isset($this->_params[$name])) && !empty($this->_params[$name]);
     }
 
     public function getParamNames() {
-        return array_keys($_REQUEST);
+        return array_keys($this->_params);
     }
 
     public function getParamValues() {
-        return array_values($_REQUEST);
+        return array_values($this->_params);
     }
 
     public function getAllParams($as_obj = false) {
-        return ($as_obj) ? _arr2obg($_REQUEST) : $_REQUEST;
+        return ($as_obj) ? _arr2obg($this->_params) : $this->_params;
     }
 
     public function forgetParam($name) {
-        unset($_REQUEST[$name]);
+        unset($this->_params[$name]);
         return $this;
     }
 
     public function appendParam($name, $value = null) {
         if (is_array($name)) {
             foreach ($name as $key => $val) {
-                $_REQUEST[$key] = $val;
+                $this->_params[$key] = $val;
             }
         }
-        $_REQUEST[$name] = $value;
+        $this->_params[$name] = $value;
         return $this;
     }
 
@@ -153,7 +182,7 @@ class Request {
     }
 
     public function getFullUrl($use_forwarded_host = false) {
-        return $this->getBaseUrl($use_forwarded_host) . $this->SERVER('REQUEST_URI');
+        return $this->getBaseUrl($use_forwarded_host) . $this->getPageUrl();
     }
 
     public function getBaseUrl($use_forwarded_host = false) {
@@ -423,6 +452,22 @@ class Request {
         }
 
         return $file_ary;
+    }
+    
+    private function cleanParams($data) {
+        $clean_param = array();
+        if (is_array($data)) {
+            foreach ($data as $k => $v) {
+                $clean_param[$k] = $this->cleanParams($v);
+            }
+        } else {
+            if (get_magic_quotes_gpc()) {
+                $data = trim(stripslashes($data));
+            }
+            $data = strip_tags($data);
+            $clean_param = trim($data);
+        }
+        return $clean_param;
     }
 
 }

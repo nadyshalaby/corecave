@@ -15,7 +15,7 @@ use App\Core\Http\Bags\DI\Container;
  * - R::get(...);
  */
 
-R::get('/test',function(){
+R::get('text',function(){
 
     Response::flash('nady','shalaby');
     

@@ -55,11 +55,12 @@ class Container implements ArrayAccess {
      * @param mixed $name
      */
     public function __get($name) {
-        return static::fetch($name);
+        return static::binding($name);
     }
 
     /**
      * Bind something to the container.
+     * if no binding given, the passed name will be fetched from the container.
      * 
      * <b>NOTE:-</b>
      * <p>
@@ -72,8 +73,15 @@ class Container implements ArrayAccess {
      * @return mixed
      * @throws Exception if the name is already binded
      */
-    public static function bind($name, $binding) {
+    public static function binding($name, $binding = null) {
 
+        if (empty($binding)) {
+            if (static::isBinded($name)) {
+                return static::$bindings[$name];
+            }
+            return null;
+        }
+        
         if (in_array($name, array_keys(static::$bindings))) {
             throw new Exception('"' . $name . '" is already binded.', 1);
         } else {
@@ -129,7 +137,7 @@ class Container implements ArrayAccess {
      * @param \Closure $attach
      * @return mixed
      */
-    public static function attach($name, Closure $attach = null) {
+    public static function attachment($name, Closure $attach = null) {
 
         if (empty($attach)) {
             if (static::isAttached($name)) {
@@ -152,7 +160,7 @@ class Container implements ArrayAccess {
      */
     public static function bindAll(array $bindings) {
         foreach ($bindings as $name => $binding) {
-            static::bind($name, $binding);
+            static::binding($name, $binding);
         }
         return new static;
     }
@@ -250,19 +258,6 @@ class Container implements ArrayAccess {
     }
 
     /**
-     * fetch the passed name from the container .
-     * 
-     * @param mixed $name
-     * @return mixed
-     */
-    public static function fetch($name) {
-        if (static::isBinded($name)) {
-            return static::$bindings[$name];
-        }
-        return null;
-    }
-
-    /**
      * grap all processes attached to the container .
      * 
      * @return mixed
@@ -299,7 +294,7 @@ class Container implements ArrayAccess {
     public static function override($name, $binding) {
         if ($name) {
             static::unbind($name);
-            return static::bind($name, $binding);
+            return static::binding($name, $binding);
         }
         return new static;
     }
@@ -351,25 +346,104 @@ class Container implements ArrayAccess {
             static::detach();
         }
         foreach ($attachments as $name => $attachment) {
-            static::attach($name, $attachment);
+            static::attachment($name, $attachment);
         }
         return $this;
     }
 
     public function offsetSet($offset, $value) {
-        static::bind($offset, $value);
+        $parts = explode('|', $offset);
+        
+        if(is_array($parts) && count($parts) > 1){
+            $key = $parts[0];
+            $filter = end($parts);
+            
+            switch (strtolower($filter)){
+                case 'p':
+                case 'process':
+                    return static::process($key, $value);
+                case 'a':
+                case 'attachment':
+                    return static::attachment($key, $value);
+                case 'b':
+                case 'binding':
+                    return static::binding($key, $value);
+                case 'o':
+                case 'override':
+                    return static::override($key, $value);
+            }
+            return;
+        }
+        static::binding($offset, $value);
     }
 
     public function offsetExists($offset) {
+        $parts = explode('|', $offset);
+        
+        if(is_array($parts) && count($parts) > 1){
+            $key = $parts[0];
+            $filter = end($parts);
+            
+            switch (strtolower($filter)){
+                case 'p':
+                case 'process':
+                    return static::isProcessed($key);
+                case 'a':
+                case 'attachment':
+                    return static::isAttached($key);
+                case 'b':
+                case 'binding':
+                    return static::isBinded($key);
+            }
+            return false;
+        }
         return static::isBinded($offset);
     }
 
     public function offsetUnset($offset) {
-        static::uninded($offset);
+        $parts = explode('|', $offset);
+        
+        if(is_array($parts) && count($parts) > 1){
+            $key = $parts[0];
+            $filter = end($parts);
+            
+            switch (strtolower($filter)){
+                case 'p':
+                case 'process':
+                    return static::unprocess($key);
+                case 'a':
+                case 'attachment':
+                    return static::detach($key);
+                case 'b':
+                case 'binding':
+                    return static::unbind($key);
+            }
+            return;
+        }
+        static::unbind($offset);
     }
 
     public function offsetGet($offset) {
-        return static::fetch($offset);
+        $parts = explode('|', $offset);
+        
+        if(is_array($parts) && count($parts) > 1){
+            $key = $parts[0];
+            $filter = end($parts);
+            
+            switch (strtolower($filter)){
+                case 'p':
+                case 'process':
+                    return static::process($key);
+                case 'a':
+                case 'attachment':
+                    return static::attachment($key);
+                case 'b':
+                case 'binding':
+                    return static::binding($key);
+            }
+            return null;
+        }
+        static::binding($offset);
     }
 
 }

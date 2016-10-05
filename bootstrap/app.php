@@ -48,7 +48,7 @@ class App {
         Container::bindAll($bindings);
 
         // setting up routes pages
-        $route = Container::bind(Router::class, new Router);
+        $route = Container::binding(Router::class, new Router);
 
         foreach (_deepDirScan(_path('routes')) as $r) {
             if (_fileHasExtension($r, 'php')) {
@@ -80,7 +80,7 @@ class App {
         $capsule = new Capsule;
         $capsule->addConnection(Config::app('db'));
         $capsule->getConnection()->setFetchMode(Config::app("db>fetch_mode"));
-        Container::bind('db', $capsule->getConnection()->getPdo());
+        Container::binding('db', $capsule->getConnection()->getPdo());
         $capsule->setEventDispatcher(new Dispatcher($container));
         $capsule->setAsGlobal();
         $capsule->bootEloquent();

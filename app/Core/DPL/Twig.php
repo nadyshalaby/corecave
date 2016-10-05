@@ -19,7 +19,7 @@ class Twig {
     protected $_twig;
 
     public function __construct() {
-        $this->_twig = Container::fetch('twig');
+        $this->_twig = Container::binding('twig');
 
         // load functions of defined classes into Twig Environment
         $this->loadStaticFunctions();

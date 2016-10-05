@@ -14,69 +14,14 @@ namespace App\Core\Http\Foundation;
 use App\Core\Http\Bags\Cookies\Cookie;
 use App\Core\Http\Bags\Sessions\Session;
 use App\Core\Support\Config;
+use App\Core\Support\Info\MimeType;
 use App\Core\Support\Url;
 
 class Response {
 
-    const TYPE_php = 'text/plain';
-    const TYPE_au = 'audio/basic';
-    const TYPE_avi = 'video/msvideo, video/avi, video/x-msvideo';
-    const TYPE_bmp = 'image/bmp';
-    const TYPE_bz2 = 'application/x-bzip2';
-    const TYPE_css = 'text/css';
-    const TYPE_dtd = 'application/xml-dtd';
-    const TYPE_doc = 'application/msword';
-    const TYPE_docx = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-    const TYPE_dotx = 'application/vnd.openxmlformats-officedocument.wordprocessingml.template';
-    const TYPE_es = 'application/ecmascript';
-    const TYPE_exe = 'application/octet-stream';
-    const TYPE_gif = 'image/gif';
-    const TYPE_gz = 'application/x-gzip';
-    const TYPE_hqx = 'application/mac-binhex40';
-    const TYPE_html = 'text/html';
-    const TYPE_jar = 'application/java-archive';
-    const TYPE_jpg = 'image/jpeg';
-    const TYPE_js = 'application/x-javascript';
-    const TYPE_midi = 'audio/x-midi';
-    const TYPE_mp3 = 'audio/mpeg';
-    const TYPE_mpeg = 'video/mpeg';
-    const TYPE_ogg = 'audio/vorbis, application/ogg';
-    const TYPE_pdf = 'application/pdf';
-    const TYPE_pl = 'application/x-perl';
-    const TYPE_png = 'image/png';
-    const TYPE_potx = 'application/vnd.openxmlformats-officedocument.presentationml.template';
-    const TYPE_ppsx = 'application/vnd.openxmlformats-officedocument.presentationml.slideshow';
-    const TYPE_ppt = 'application/vnd.ms-powerpointtd>';
-    const TYPE_pptx = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
-    const TYPE_ps = 'application/postscript';
-    const TYPE_qt = 'video/quicktime';
-    const TYPE_ra = 'audio/x-pn-realaudio, audio/vnd.rn-realaudio';
-    const TYPE_ram = 'audio/x-pn-realaudio, audio/vnd.rn-realaudio';
-    const TYPE_rdf = 'application/rdf, application/rdf+xml';
-    const TYPE_rtf = 'application/rtf';
-    const TYPE_sgml = 'text/sgml';
-    const TYPE_json = 'application/json';
-    const TYPE_sit = 'application/x-stuffit';
-    const TYPE_sldx = 'application/vnd.openxmlformats-officedocument.presentationml.slide';
-    const TYPE_svg = 'image/svg+xml';
-    const TYPE_swf = 'application/x-shockwave-flash';
-    const TYPE_tar_gz = 'application/x-tar';
-    const TYPE_tgz = 'application/x-tar';
-    const TYPE_tiff = 'image/tiff';
-    const TYPE_tsv = 'text/tab-separated-values';
-    const TYPE_txt = 'text/plain';
-    const TYPE_wav = 'audio/wav, audio/x-wav';
-    const TYPE_xlam = 'application/vnd.ms-excel.addin.macroEnabled.12';
-    const TYPE_xls = 'application/vnd.ms-excel';
-    const TYPE_xlsb = 'application/vnd.ms-excel.sheet.binary.macroEnabled.12';
-    const TYPE_xlsx = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    const TYPE_xltx = 'application/vnd.openxmlformats-officedocument.spreadsheetml.template';
-    const TYPE_xml = 'application/xml';
-    const TYPE_zip = 'application/zip, application/x-compressed-zip';
-    
-    
     protected $session;
     protected $cookie;
+
     public function __construct() {
         $this->session = new Session;
         $this->cookie = new Cookie;
@@ -139,49 +84,19 @@ class Response {
     }
 
     public function withJson(...$args) {
-        $this->setContentType(self::TYPE_json);
+        $this->setContentType(MimeType::extension('json'));
         return json_encode(...$args);
     }
 
-    public function withError($code, $default_message = '') {
-        if (is_numeric($code)) {
-            $txt = '';
-            switch ($code) {
-                case 404:
-                    // Page was not found:
-                    header('HTTP/1.1 404 Not Found');
-                    break;
-                case 403:
-                    // Access forbidden:
-                    header('HTTP/1.1 403 Forbidden');
-                    break;
-                case 410:
-                    header('HTTP/1.1 403 Gone');
-                    break;
-                case 500:
-                    header('HTTP/1.1 500 Internal Server Error');
-                    break;
-                case 503:
-                    header('HTTP/1.1 503 Service Unavailable');
-                    break;
-                case 301:
-                    header('HTTP/1.1 301 Page Moved Permanently');
-                    break;
-                case 304:
-                    header('HTTP/1.1 304 Not modified');
-                    break;
-                case 307:
-                    header('HTTP/1.1 304 Temporary redirect');
-                    break;
-                case 401:
-                    header('HTTP/1.1 401 Unauthorized: Access is denied due to invalid credentials');
-                    break;
-                default:
-                    header("HTTP/1.1 $code");
-            }
-            $error_page = Config::app("url.error.$code");
+    public function withStatus($status, $default_message = '' ,$content_type = 'text/html') {
+            $this->setStatusHeader($status,$content_type);
+
+            $error_page = Config::app("url.error.$status");
             die(empty($error_page) ? $default_message : _twig($error_page));
-        }
+    }
+    
+    public function withNotFound($default_message = '' ,$content_type = 'text/html') {
+        $this->withStatus(404, $default_message, $content_type);
     }
 
     public function setContentLength($long) {
@@ -204,7 +119,7 @@ class Response {
         $this->session->delete($name);
         return $this;
     }
-    
+
     public function flushSessions() {
         $this->session->flush();
         return $this;
@@ -219,7 +134,7 @@ class Response {
         $this->cookie->delete($name);
         return $this;
     }
-    
+
     public function flushCookies() {
         $this->cookie->flush();
         return $this;
@@ -236,13 +151,70 @@ class Response {
     }
 
     public function setContentTypeForFile($filename) {
-        header("Content‐Type: " . mime_content_type($filename));
+        header("Content‐Type: " . MimeType::file($filename));
         return $this;
+    }
+
+    public function write($data, $status = 200, $content_type = 'text/html') {
+        $this->setStatusHeader($status, $content_type);
+        echo $data;
+        exit;
+    }
+
+    public function setStatusHeader($status, $content_type = 'text/html') {
+        header("HTTP/1.1 " . $status . " " . $this->getStatusMessage($status));
+        header("Content-Type:" . $content_type);
+    }
+
+    public function getStatusMessage($code) {
+        $status = array(
+            100 => 'Continue',
+            101 => 'Switching Protocols',
+            200 => 'OK',
+            201 => 'Created',
+            202 => 'Accepted',
+            203 => 'Non-Authoritative Information',
+            204 => 'No Content',
+            205 => 'Reset Content',
+            206 => 'Partial Content',
+            300 => 'Multiple Choices',
+            301 => 'Moved Permanently',
+            302 => 'Found',
+            303 => 'See Other',
+            304 => 'Not Modified',
+            305 => 'Use Proxy',
+            306 => '(Unused)',
+            307 => 'Temporary Redirect',
+            400 => 'Bad Request',
+            401 => 'Unauthorized',
+            402 => 'Payment Required',
+            403 => 'Forbidden',
+            404 => 'Not Found',
+            405 => 'Method Not Allowed',
+            406 => 'Not Acceptable',
+            407 => 'Proxy Authentication Required',
+            408 => 'Request Timeout',
+            409 => 'Conflict',
+            410 => 'Gone',
+            411 => 'Length Required',
+            412 => 'Precondition Failed',
+            413 => 'Request Entity Too Large',
+            414 => 'Request-URI Too Long',
+            415 => 'Unsupported Media Type',
+            416 => 'Requested Range Not Satisfiable',
+            417 => 'Expectation Failed',
+            500 => 'Internal Server Error',
+            501 => 'Not Implemented',
+            502 => 'Bad Gateway',
+            503 => 'Service Unavailable',
+            504 => 'Gateway Timeout',
+            505 => 'HTTP Version Not Supported');
+        return (isset($status[$code])) ? $status[$code] : $status[500];
     }
 
     public function download($filepath, $filename = '', $open_in_browser = false) {
         $filename = (empty($filename)) ? basename($filepath) : $filename;
-        $filetype = ($open_in_browser) ? mime_content_type($filepath) : self::TYPE_exe;
+        $filetype = ($open_in_browser) ? mime_content_type($filepath) : MimeType::MIME_TYPE_IF_UNKNOWN;
         $dispostion = ($open_in_browser) ? "inline" : "attachment";
         $ext = pathinfo($filepath, PATHINFO_EXTENSION);
         if (stristr($filename, $ext) == FALSE) {

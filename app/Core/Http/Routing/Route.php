@@ -2,7 +2,6 @@
 
 namespace App\Core\Http\Routing;
 
-use App\Core\Http\Foundation\Middleware;
 use App\Core\Support\Resolver;
 
 class Route {
